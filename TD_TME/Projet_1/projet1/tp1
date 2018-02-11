@@ -1,0 +1,19 @@
+Exercice 2
+Q2.1
+X= N de mots
+Y = -1 / 1
+P(Y = +1|X = x) = probabilité que le mail soit un spam (Y = +1) sachant un nombre de mot X.
+P(X = x|Y = +1) = probabilité d'avoir un nombre de mot X sachant que le mail est un spam.
+P(Y = +1) = probabilité d'avoir un mail spam.
+P(X = x) = probabilité d'avoir un nombre de mots définis.
+
+estimation de la distribution
+P(X = x|Y =+1) ==> plus il a de mots, plus 
+
+
+
+Q2.2
+Au vu des résultats il serait raisonnable de ne considérer que les cas compris entre 1 et 1500 mots et de regrouper en intervalle de 50.
+
+Q2.3
+
