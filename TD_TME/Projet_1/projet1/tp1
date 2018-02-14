@@ -16,4 +16,17 @@ Q2.2
 Au vu des résultats il serait raisonnable de ne considérer que les cas compris entre 1 et 1500 mots et de regrouper en intervalle de 50.
 
 Q2.3
+OK
 
+Q2.4
+P(f(x)!=y) = 0.12 
+pour 50% des mails de spam et non spam utilisé pour l'apprentissage
+pour 50% restant des mails de spam et non spam utilisé pour le test
+
+P(f(x) =+1|y = -1)=
+pour 50% des mails de spam et non spam utilisé pour l'apprentissage
+pour 50% restant des mails de spam et non spam utilisé pour le test
+
+P(f(x) =-1|y = +1)=
+pour 50% des mails de spam et non spam utilisé pour l'apprentissage
+pour 50% restant des mails de spam et non spam utilisé pour le test
