@@ -1,7 +1,7 @@
 Exercice 2
 Q2.1
 X= N de mots
-Y = -1 / 1
+Y = -1 / +1
 P(Y = +1|X = x) = probabilité que le mail soit un spam (Y = +1) sachant un nombre de mot X.
 P(X = x|Y = +1) = probabilité d'avoir un nombre de mot X sachant que le mail est un spam.
 P(Y = +1) = probabilité d'avoir un mail spam.
@@ -19,14 +19,34 @@ Q2.3
 OK
 
 Q2.4
-P(f(x)!=y) = 0.12 
+P(f(x)!=y) = (52+476)/1319 
 pour 50% des mails de spam et non spam utilisé pour l'apprentissage
 pour 50% restant des mails de spam et non spam utilisé pour le test
+==> Prédit != Resultat
 
-P(f(x) =+1|y = -1)=
+P(f(x) =+1|y = -1)=(52/1319)
 pour 50% des mails de spam et non spam utilisé pour l'apprentissage
 pour 50% restant des mails de spam et non spam utilisé pour le test
+==> Prédit spam / resultat = non spam
 
-P(f(x) =-1|y = +1)=
+P(f(x) =-1|y = +1)=476/1319
 pour 50% des mails de spam et non spam utilisé pour l'apprentissage
 pour 50% restant des mails de spam et non spam utilisé pour le test
+==> Prédit non spam / resultat = spam
+
+++ voir code
+
+Exercice 3
+
+Q3.1
+P(X = x|Y = +1) = probabilité d'avoir un mot X sachant que le mail est un spam.
+Il faudrait créer un tableau avec nb de case = nb mots d'un dico et pour chaque
+mot, compter le nb de mail spam contenant le mot et le nb de mail non spam 
+contenant le mot parmis notre dataset. 
+==> Notre tableau serait donc trop lourd.
+==> Dictionnaire de 1000 mots = 1000 entrées d'un tableau
+
+Q3.2 
+voir def mot_mail    (ok)
+voir def mot_present (ok)
+voir def compte_mot_coll (ko)

@@ -65,7 +65,6 @@ def longueur(mail):
 
 #print (longueur(spam[0]))
 
-
 ##histogramme
 import matplotlib.pyplot as plt
 data=[]
@@ -76,18 +75,16 @@ for i in spam:
 
 #plt.hist(data)
 #plt.show()
-
 #print (spam[0])
 
-def apprend_modele(spam,nonspam):
+def apprend_modele(spam,nonspam,intervalle):
     total_intervalle=[]
     total_res=[]
     total=[]
     taille_spam=len(spam)
     taille_nonspam=len(nonspam)
-    intervalle=50
     cpt=0
-    while (cpt!=1600):
+    while (cpt<=1600):
         nb_spam=0
         nb_non_spam=0
         total_intervalle.append(cpt)
@@ -97,16 +94,21 @@ def apprend_modele(spam,nonspam):
         for i in nonspam:
             if (cpt<longueur(i)<=cpt+intervalle):
                 nb_non_spam=nb_non_spam+1
-        if (nb_spam>=nb_non_spam):
+        if (nb_spam>nb_non_spam):
                 total_res.append("spam")
-        else:
+        if (nb_spam<nb_non_spam):
                 total_res.append("non spam")
+        nb_alter=0
+        if (nb_spam==nb_non_spam):
+            if (nb_alter%2 == 0):
+                total_res.append("spam")
+            else:
+                total_res.append("non spam")
+            nb_alter+=1
         cpt=cpt+intervalle
     total.append(total_intervalle)
     total.append(total_res)
     return total
-
-
 
 def predit_mail (emails,modele):
 	nb_mots=longueur(emails)
@@ -125,90 +127,144 @@ def predit_mail (emails,modele):
 #modele = [ [0 , 50 , 100]  [spam/non spam] ]
 
 def accuracy (liste_mail,modele):
-	win = 0
-	not_win_1 =0
-	not_win_2 =0
-	cpt=0
-	for i in liste_mail[0]:
-		taille=longueur(i)
-		j=0
-		if (taille > 1550):
-			taille=1550
-		while (modele[0][j]<taille):
-			j=j+1
-		#j-1
-		#Si la prédiction est bonne
-		if (modele[1][j-1]==liste_mail[1][cpt]):
-			win = win + 1
-		if (modele[1][j-1]=="spam") and (liste_mail[1][cpt]=="non spam"):
-			print("ok")
-			not_win_1= not_win_1 +1
-		if (modele[1][j-1]=="non spam") and (liste_mail[1][cpt]=="spam"):
-			not_win_2= not_win_2 +1
-		cpt = cpt+1
-	print(not_win_1/cpt)
-	print(not_win_2/cpt)
-	return win/cpt
+    win_1 = 0
+    win_2 = 0
+    passe = 0
+    not_win_1 =0
+    not_win_2 =0
+    i=0
+    w=0
+    while (i < len(liste_mail[0])):
+        #Si le nb mot est > 1600
+        if (longueur(liste_mail[0][i]) > 1600):
+            w=w+1
+            i=i+1
+        else:
+            j=0
+            for k in modele[0]:
+                if (k>longueur(liste_mail[0][i])):
+                    if (modele[1][j]=="spam") and (liste_mail[1][i]=="spam"):
+                        win_1 = win_1 + 1
+                    if (modele[1][j]=="non spam") and (liste_mail[1][i]=="non spam"):
+                        win_2 = win_2 + 1
+                    if (modele[1][j]=="spam") and (liste_mail[1][i]=="non spam"):
+                        not_win_1= not_win_1 +1
+                    if (modele[1][j]=="non spam") and (liste_mail[1][i]=="spam"):
+                        not_win_2= not_win_2 +1
+                    break
+                else:
+                    j=j+1
+            i=i+1
+    print("-------------------------------")
+    print("predict|result")
+    print("-------------------------------")
+    print("win")
+    print("spam|spam: ",win_1)
+    print("non spam|non spam:",win_2)
+    print("-------------------------------")
+    print("fail")
+    print("spam|non spam: ",not_win_1)
+    print("non spam|spam: ",not_win_2)
+    print("-------------------------------")
+    print("nombre de mail test: ", i)
+    print("nombre de mail test ignoré (car nb mot>1600) : ", w)
+    return (win_1+win_2)/(i-w)
 
 
+#in : spam, nospam %
+#split spam/nospam in learning and test dataset by % given
+#out : accuracy between test and learning dataset
+def test (sp,nosp,pourcentage):
+    spam=split(sp,pourcentage)
+    nospam=split(nosp,pourcentage)
+    apprentissage_spam=spam[0]
+    apprentissage_nospam=nospam[0]
+    test_spam=spam[1]
+    test_nospam=nospam[1]
+    mail=[]
+    label=[]
+    liste_test=[]
 
-#faire varier le pourcentage d'exemples
-spam1=split(spam,0.5)
-apprentissage_spam = spam1[0]
-test_spam = spam1[1]
+    #Liste mail/label test
+    for i in test_spam:
+        mail.append(i)
+    for j in test_nospam:
+        mail.append(j)
+    a=len(test_spam)
+    b=len(test_nospam)
+    k=0
+    l=0
+    while k<a:
+        label.append("spam")
+        k+=1
+    while l<b:
+        label.append("non spam")
+        l+=1
+    liste_test.append(mail)
+    liste_test.append(label)
 
-#faire varier le pourcentage d'exemples
-nospam1=split(nospam,0.5)
-apprentissage_nospam=nospam1[0]
-test_nospam =nospam1[1]
+    #Apprentissage intervalle
+    spam2=[]
+    nospam2=[]
+    for i in apprentissage_spam:
+        spam2.append(i)
+    for j in apprentissage_nospam:
+        nospam2.append(j)
+    modele = apprend_modele(spam2,nospam2,50)
 
-mail1=[]
+    return accuracy(liste_test,modele)
 
-for i in test_spam:
-	mail1.append(i)
+print(test(spam,nospam,0.5))
 
-for j in test_nospam:
-	mail1.append(j)
-label1=[]
+#Q2.4 voir code
+#tab=[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
+#tab_res=[]
+#for i in tab:
+#    tab_res.append(test(spam,nospam,i))
+#print (tab_res)
 
-cpt=0
+#Renvoie le mot d'indice donné d'un mail
+def mot_mail(mail,indice):
+    mot=""
+    cpt=0
+    for i in mail:
+        if ((cpt==indice) and (i!=" ")):
+            mot=mot+i
+        if (i==" "):
+            cpt=cpt+1
+    return mot
 
-while (cpt <len(test_spam)):
-	label1.append("spam")
-	cpt=cpt+1
+#print (mot_mail(spam[0],0))
 
-cpt=0
-while (cpt <len(test_nospam)):
-	label1.append("no spam")
-	cpt=cpt+1
+#Renvoie un booléen indiquant si un mot est present dans un mail ou non
+def mot_present(mail,mot):
+    cpt=0
+    while (cpt<longueur(mail)):
+        mot_courant=mot_mail(mail,cpt)
+        if (mot_courant==mot):
+            return True
+        cpt=cpt+1
+    return False
 
+#print(mot_present(spam[0],"Wanna"))
 
+def compte_mot_coll(collection):
+    i=0
+    tab_mot=[]
+    tab_apparition=[]
+    tab_total=[]
+    for mail in collection:
+        mot_courant = mot_mail(mail,i)
+        if (mot_courant not in tab_mot):
+            tab_mot.append(mot_courant)
+            cpt=0
+            for mail in collection:
+                if (mot_present(mail,mot_courant)):
+                    cpt=cpt+1
+            tab_apparition.append(cpt)
+        i=i+1
+    tab_total.append(tab_mot)
+    tab_total.append(tab_apparition)
+    return tab_total
 
-liste_mail1=[]
-liste_mail1.append(mail1)
-liste_mail1.append(label1)
-
-spam2=[]
-nospam2=[]
-
-for i in apprentissage_spam:
-	spam2.append(i)
-
-for j in apprentissage_nospam:
-	nospam2.append(j)
-
-modele1 = apprend_modele(spam2,nospam2)
-
-print(accuracy(liste_mail1,modele1))
-
-
-
-
-
-
-
-
-
-
-
-
+#print(compte_mot_coll(spam))
