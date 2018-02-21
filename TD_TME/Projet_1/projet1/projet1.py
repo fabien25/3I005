@@ -223,48 +223,52 @@ print(test(spam,nospam,0.5))
 #    tab_res.append(test(spam,nospam,i))
 #print (tab_res)
 
-#Renvoie le mot d'indice donné d'un mail
-def mot_mail(mail,indice):
-    mot=""
-    cpt=0
-    for i in mail:
-        if ((cpt==indice) and (i!=" ")):
-            mot=mot+i
-        if (i==" "):
-            cpt=cpt+1
-    return mot
+def liste_mot_mail(mail):
+	liste_mot=[]
+	mot =""
+	for i in mail:
+		if (i!=" "):
+			mot=mot+i
+		if (i==" "):
+			liste_mot.append(mot)
+			mot =""
+	return liste_mot
+
+#print (spam[0])
+#print (liste_mot_mail(spam[0]))
 
 #print (mot_mail(spam[0],0))
 
 #Renvoie un booléen indiquant si un mot est present dans un mail ou non
 def mot_present(mail,mot):
-    cpt=0
-    while (cpt<longueur(mail)):
-        mot_courant=mot_mail(mail,cpt)
-        if (mot_courant==mot):
-            return True
-        cpt=cpt+1
-    return False
+	liste_mot= liste_mot_mail(mail)
+	return mot in liste_mot
 
 #print(mot_present(spam[0],"Wanna"))
 
 def compte_mot_coll(collection):
-    i=0
-    tab_mot=[]
-    tab_apparition=[]
-    tab_total=[]
-    for mail in collection:
-        mot_courant = mot_mail(mail,i)
-        if (mot_courant not in tab_mot):
-            tab_mot.append(mot_courant)
-            cpt=0
-            for mail in collection:
-                if (mot_present(mail,mot_courant)):
-                    cpt=cpt+1
-            tab_apparition.append(cpt)
-        i=i+1
-    tab_total.append(tab_mot)
-    tab_total.append(tab_apparition)
-    return tab_total
+	i=0
+	dico = {}
+	for mail in collection:
+		#le set elimine les doublons
+		liste_mot = set(liste_mot_mail(mail))
+		for mot in liste_mot:
+			mot=mot.lower()
+			if (mot in dico):
+				dico[mot]=dico[mot]+1
+			else:
+				dico[mot]=1
+			print(mot,dico[mot])
+	return dico
 
-#print(compte_mot_coll(spam))
+print("---------------------------------------")
+dico1=compte_mot_coll(spam)
+print(dico1["france"])
+print("---------------------------------------")
+
+
+
+
+
+
+
