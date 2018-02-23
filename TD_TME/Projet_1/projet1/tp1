@@ -49,4 +49,15 @@ contenant le mot parmis notre dataset.
 Q3.2 
 voir def mot_mail    (ok)
 voir def mot_present (ok)
-voir def compte_mot_coll (ko)
+voir def compte_mot_coll (ok)
+Il vaudrait mieu se concentrer sur les mots ne comptenant que des lettres,
+n'excedant pas un certain nombre de caractère et ne comprenant pas de caractères
+spéciaux comme *^%$ ...
+On transformera les mots en miniscule.
+
+
+Q3.3
+
+
+
+

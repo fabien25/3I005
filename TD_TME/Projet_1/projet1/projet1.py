@@ -266,6 +266,10 @@ dico1=compte_mot_coll(spam)
 print(dico1["france"])
 print("---------------------------------------")
 
+#Histogramme à créer
+#plt.hist(data)
+#plt.show()
+#print (spam[0])
 
 
 
