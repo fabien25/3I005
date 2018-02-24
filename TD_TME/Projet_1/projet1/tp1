@@ -51,9 +51,13 @@ voir def mot_mail    (ok)
 voir def mot_present (ok)
 voir def compte_mot_coll (ok)
 Il vaudrait mieu se concentrer sur les mots ne comptenant que des lettres,
+Les mots inférieurs à 20 lettres et supérieurs à 1 lettre
 n'excedant pas un certain nombre de caractère et ne comprenant pas de caractères
-spéciaux comme *^%$ ...
+spéciaux comme *^%$_... (ou des accents car anglais)
 On transformera les mots en miniscule.
+virer les mots apparaissant 1 fois...
+
+
 
 
 Q3.3
