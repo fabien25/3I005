@@ -1,5 +1,6 @@
 import email
 import re
+import math
 
 def read_file(fname):
     """ Lit un fichier compose d'une liste de emails, chacun separe par au moins 2 lignes vides."""
@@ -370,3 +371,48 @@ print(test(spam,nospam,0.5,apprend_modele2,predit_mail2))
 #plt.xlabel('Taille')
 #plt.ylabel('Erreur')
 #plt.show()
+
+def distance (xi,xj):
+    x1=float(xi[0])
+    y1=float(xi[1])
+    x2=float(xj[0])
+    y2=float(xj[1])
+    return sqrt((x1-x2)**2 + (y1-y2)**2)
+
+
+############################# A DEBUG #######################################
+def pij (email,i,j):
+    numerateur=math.exp((-distance(email[i],email[j]))/(2*np.var(email[i])))
+    denominateur=0.0
+    for k in range(len(email)):
+        denominateur=somme+math.exp((-distance(email[k],email[i]))/(2*np.var(email[i])))
+    return numerateur/denominateur
+
+def qij (email,i,j):
+    numerateur=exp((-distance(email[i],email[j]))/(np.var(email[i])))
+    denominateur=0.0
+    for k in range(len(email)):
+        denominateur=denominateur+exp((-distance(email[k],email[i]))/(np.var(email[i])))
+    return numerateur/denominateur
+
+def kl(pij,qij):
+    somme=0.0
+    for j in range (len(email)):
+        for i in range (len(email)):
+            somme=somme+pij*log(pij/qij)
+    return somme
+
+def SNE(email):
+    #1 - Pour chaque email i, calculer les probabilités Pij. 
+    for i in email:
+        pij=pij(i)
+        #2 - Initialiser les yi aléatoirement pour chaque email i, selon la loi N(0; 1/2 ) pour chaque dimension
+        yi=numpy.random.normal(0, 0.5)
+        #3 - Sélectionner aléatoirement un email i parmi l’ensemble des emails
+        cpt=0
+        while (cpt<len(email)):
+            alea = random.randint(0,len(email))
+        ##
+        ##
+    return false
+###########################################################################
