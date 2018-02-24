@@ -111,70 +111,61 @@ def apprend_modele(spam,nonspam,intervalle):
     return total
 
 def predit_mail (emails,modele):
-	nb_mots=longueur(emails)
-	cpt=0
-	a=0
-	for i in modele[0]:
-		if (i==nb_mots):
-			a=cpt	
-		cpt=cpt+1
-	return modele[1][a]
-
-#print(predit_mail(spam[0],modele1))
-
+    nb_mots=longueur(emails)
+    cpt=0
+    for i in modele[0]:
+        if (i>nb_mots):
+            #print ("nbmot",nb_mots)
+            #print ("i",i)
+            break
+        cpt=cpt+1
+    return modele[1][cpt-1]
 
 #liste_mail = [  [mail]   [spam/non spam] ]
 #modele = [ [0 , 50 , 100]  [spam/non spam] ]
-
-def accuracy (liste_mail,modele):
-    win_1 = 0
-    win_2 = 0
-    passe = 0
-    not_win_1 =0
-    not_win_2 =0
+def accuracy (liste_mail,modele,fpredit):
     i=0
     w=0
-    while (i < len(liste_mail[0])):
-        #Si le nb mot est > 1600
-        if (longueur(liste_mail[0][i]) > 1600):
+    win_1=0
+    win_2=0
+    not_win_1=0
+    not_win_2=0
+    #Si le nb mot est > 1600
+    for mail in liste_mail[0]:
+        if (longueur(mail)>1600):
             w=w+1
             i=i+1
         else:
-            j=0
-            for k in modele[0]:
-                if (k>longueur(liste_mail[0][i])):
-                    if (modele[1][j]=="spam") and (liste_mail[1][i]=="spam"):
-                        win_1 = win_1 + 1
-                    if (modele[1][j]=="non spam") and (liste_mail[1][i]=="non spam"):
-                        win_2 = win_2 + 1
-                    if (modele[1][j]=="spam") and (liste_mail[1][i]=="non spam"):
-                        not_win_1= not_win_1 +1
-                    if (modele[1][j]=="non spam") and (liste_mail[1][i]=="spam"):
-                        not_win_2= not_win_2 +1
-                    break
-                else:
-                    j=j+1
+            predict=fpredit(mail,modele)
+            if ((predict=="spam") and (liste_mail[1][i]=="spam")):
+                win_1=win_1+1
+            if ((predict=="non spam") and (liste_mail[1][i]=="non spam")):
+                win_2=win_2+1
+            if ((predict=="spam") and (liste_mail[1][i]=="non spam")):
+                not_win_1=not_win_1+1
+            if ((predict=="non spam") and (liste_mail[1][i]=="spam")):
+                not_win_2=not_win_2+1
             i=i+1
-    print("-------------------------------")
-    print("predict|result")
-    print("-------------------------------")
-    print("win")
-    print("spam|spam: ",win_1)
-    print("non spam|non spam:",win_2)
-    print("-------------------------------")
-    print("fail")
-    print("spam|non spam: ",not_win_1)
-    print("non spam|spam: ",not_win_2)
-    print("-------------------------------")
-    print("nombre de mail test: ", i)
-    print("nombre de mail test ignoré (car nb mot>1600) : ", w)
+    print("-------------------------------------------------------")
+    print("predict|result                                         ")
+    print("-------------------------------------------------------")
+    print("win                                                    ")
+    print("spam|spam:",win_1,"                                    ")
+    print("non spam|non spam:",win_2,"                            ")
+    print("-------------------------------------------------------")
+    print("fail                                                   ")
+    print("spam|non spam:",not_win_1,"                            ")
+    print("non spam|spam:",not_win_2,"                            ")
+    print("-------------------------------------------------------")
+    print("nombre de mail test:", i,"                             ")
+    print("nombre de mail test ignoré (car nb mot>1600):", w,"    ")
+    print("-------------------------------------------------------")
     return (win_1+win_2)/(i-w)
-
 
 #in : spam, nospam %
 #split spam/nospam in learning and test dataset by % given
 #out : accuracy between test and learning dataset
-def test (sp,nosp,pourcentage,fmodele):
+def test (sp,nosp,pourcentage,fmodele,fpredit):
     spam=split(sp,pourcentage)
     nospam=split(nosp,pourcentage)
     apprentissage_spam=spam[0]
@@ -212,9 +203,23 @@ def test (sp,nosp,pourcentage,fmodele):
         nospam2.append(j)
     modele = fmodele(spam2,nospam2,50)
 
-    return accuracy(liste_test,modele)
+    return accuracy(liste_test,modele,fpredit)
 
-print(test(spam,nospam,0.5,apprend_modele))
+print("")
+print("Classification à partir de la longueur d'un email (~5sec)")
+print(test(spam,nospam,0.5,apprend_modele,predit_mail))
+#Erreur en fonction de la taille du dico (5min max)
+#taille=[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
+#erreur=[]
+
+#for i in taille:
+#    erreur.append(1.0-test(spam,nospam,i,apprend_modele,predit_mail))
+
+#plt.title("Erreur en fonction de la taille du dico")
+#plt.plot(taille, erreur)
+#plt.xlabel('Taille')
+#plt.ylabel('Erreur')
+#plt.show()
 
 #Q2.4 voir code
 #tab=[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
@@ -267,11 +272,10 @@ def compte_mot_coll(collection):
 			#print(mot,dico[mot])
 	return dico
 
-print("---------------------------------------")
+#print("")
 dico1=compte_mot_coll(spam)
 #print(dico1)
-print(dico1["france"])
-print("---------------------------------------")
+#print("nombre de mail spam contenant le mot France :",dico1["france"])
 
 #Pour trier le dico par ordre decroissant
 import operator
@@ -289,87 +293,80 @@ for i in ma_liste_coupe[0]:
     mot.append(i[0])
     occu.append(i[1])
 
-y=occu
-plt.hist(occu)
-axes = plt.gca()
-axes.set_xlim(0, 400)
-plt.xlabel('mot')
-plt.ylabel('occu')
+#y=occu
+#plt.hist(occu)
+#axes = plt.gca()
+#axes.set_xlim(0, 400)
+#plt.xlabel('mot')
+#plt.ylabel('occu')
 #plt.show()
 
-def apprend_2(spam,nonspam):
+#ici int est inutile
+def apprend_modele2(spam,nonspam,int):
     dico_spam=compte_mot_coll(spam)
     dico_nonspam=compte_mot_coll(nonspam)
     dico_spam_l=compte_mot_coll(spam).items()
     dico_nonspam_l=compte_mot_coll(nonspam).items()
     mot=[]
     label=[]
-    total=[]
+    total={}
     nb_alter=0
     for i in dico_spam_l:
         mot_courant=i[0]
         occu_spam=i[1]
         if mot_courant not in mot:
+            mot.append(mot_courant)
+            occu_nonspam=0
             if mot_courant in dico_nonspam.keys():
                 occu_nonspam=dico_nonspam[mot_courant]
-            else:
-                occu_nonspam=0
             if (occu_spam>occu_nonspam):
                 label.append("spam")
             if (occu_spam<occu_nonspam):
                 label.append("non spam")
-            if (occu_spam==occu_non_spam):
+            if (occu_spam==occu_nonspam):
                 if (nb_alter%2 == 0):
                     label.append("spam")
                 else:
                     label.append("non spam")
                 nb_alter+=1
-
     for i in dico_nonspam_l:
         mot_courant=i[0]
         occu_nonspam=i[1]
         if mot_courant not in mot:
-            if mot_courant in dico_spam.keys():
-                occu_spam=dico_spam[mot_courant]
-            else:
-                occu_spam=0
-            if (occu_spam>occu_nonspam):
-                label.append("spam")
-            if (occu_spam<occu_nonspam):
-                label.append("non spam")
-            if (occu_spam==occu_non_spam):
-                if (nb_alter%2 == 0):
-                    label.append("spam")
-                else:
-                    label.append("non spam")
-                nb_alter+=1
-    total.append(mot)
-    total.append(label)
+            mot.append(mot_courant)
+            label.append("non spam")
+    for i in range(len(mot)):
+        total[mot[i]]=label[i]
     return total
 
 def predit_mail2 (emails,modele):
     liste_mot=liste_mot_mail(emails)
-    taille_modele=len(modele[0])
     spam=0
     nonspam=0
     for mot in liste_mot:
-        i=0
-        while (i<taille_modele):
-            if (modele[0][i]==mot):
-                if (modele[1][i]=="spam"):
-                    spam=spam+1
-                if (modele[1][i]=="non spam"):
-                    nonspam=nonspam+1
+        if mot in modele.keys():
+            if (modele[mot]=="spam"):
+                spam=spam+1
+            if (modele[mot]=="non spam"):
+                nonspam=nonspam+1
     if (nonspam>spam):
         return "non spam"
-    if (spam>nonspam):
+    if (spam>=nonspam):
         return "spam"
-    if (spam==nonspam):
-        return "autant de spam/nonspam"
 
+print("")
+print("Classification à partir du contenu d'un email (~10/15sec)")
+print(test(spam,nospam,0.5,apprend_modele2,predit_mail2))
 
+#Erreur en fonction de la taille du dico (5min max)
+#taille=[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
+#erreur=[]
 
+#for i in taille:
+#    erreur.append(1.0-test(spam,nospam,i,apprend_modele2,predit_mail2))
 
-
-
-##########DEBUG TEST PREDICT
+#plt.title("Erreur en fonction de la taille du dico")
+#plt.plot(taille, erreur)
+#plt.xlabel('Taille')
+#plt.ylabel('Erreur')
+#plt.show()
