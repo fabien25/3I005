@@ -110,7 +110,7 @@ non spam/spam & 317\\
 \hline
 nombre de mail test & 1349\\
 \hline
-nombre de mail test ignoré (car nb mots>1500) & 47\\
+nombre de mail test ignoré (car nb mots>1200) & 47\\
 \hline
 Accuracy & 0.7565\\
 \hline
@@ -119,12 +119,13 @@ Accuracy & 0.7565\\
 \\
 (50\% apprentissage et 50\% test)\\
 
-Ainsi que ce second classifieur est plus efficace que le premier du fait d'une meilleure accuracy.Nous en avons donc déduit qu'il était plus intéréssant de classer les mails en fonction de leur contenu que par rapport à leur taille.\\
+Ainsi le second classifieur est plus efficace que le premier du fait d'une meilleure précision. Nous en avons donc déduit qu'il était plus intéréssant de classer les mails en fonction de leur contenu que par rapport à leur taille.\\
 
 D'autre part, nous avons remarqué dans les deux cas que plus la taille initial du dico servant à l'apprentissage est importante, plus l'accuracy augmente et donc plus le taux d'erreur (1-accuracy) diminue.\\ 
+Classifieur en fonction de la longueur:\\
 \includegraphics[scale=0.5]{Figure_2}\\
-\includegraphics[scale=0.5]{Figure_3}\\
-
+Classifieur en fonction du contenu:\\
+\includegraphics[scale=0.5]{Figure_3}
 \section{Visualisation}
 
 \section{Conclusion}
