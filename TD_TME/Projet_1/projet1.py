@@ -36,6 +36,7 @@ def get_emails_from_file(f):
 spam = get_emails_from_file("spam.txt" )
 nospam = get_emails_from_file("nospam.txt")
 
+#Decoupe une liste en deux en fonction du % x donné
 def split (liste,x):
     lr1=[]
     lr2=[]
@@ -57,6 +58,7 @@ def split (liste,x):
 #print(split(spam,0.01))
 #print(spam[0]) #premier mail
 
+#Retourne le nb de mots d'un mail
 def longueur(mail):
     cpt=0
     for i in mail:
@@ -74,10 +76,17 @@ for i in spam:
     data.append(longueur(i))
     #print (longueur(i))
 
+#axes = plt.gca()
+#axes.set_xlim(0, 1600)
+#plt.xlabel("nb mots")
+#plt.ylabel("nb mails")
 #plt.hist(data)
 #plt.show()
 #print (spam[0])
 
+##Classifier en fonction du nombre de mots
+
+#Fonction d'apprentissage
 def apprend_modele(spam,nonspam,intervalle):
     total_intervalle=[]
     total_res=[]
@@ -86,7 +95,7 @@ def apprend_modele(spam,nonspam,intervalle):
     taille_nonspam=len(nonspam)
     cpt=0
     nb_alter=0
-    while (cpt<=1600):
+    while (cpt<=1200):
         nb_spam=0
         nb_non_spam=0
         total_intervalle.append(cpt)
@@ -111,6 +120,7 @@ def apprend_modele(spam,nonspam,intervalle):
     total.append(total_res)
     return total
 
+#Fonction de prediction
 def predit_mail (emails,modele):
     nb_mots=longueur(emails)
     cpt=0
@@ -122,6 +132,8 @@ def predit_mail (emails,modele):
         cpt=cpt+1
     return modele[1][cpt-1]
 
+
+#Fonction permettant de calculer l'accuracy du classifier
 #liste_mail = [  [mail]   [spam/non spam] ]
 #modele = [ [0 , 50 , 100]  [spam/non spam] ]
 def accuracy (liste_mail,modele,fpredit):
@@ -131,9 +143,9 @@ def accuracy (liste_mail,modele,fpredit):
     win_2=0
     not_win_1=0
     not_win_2=0
-    #Si le nb mot est > 1600
+    #Si le nb mot est > 1200
     for mail in liste_mail[0]:
-        if (longueur(mail)>1600):
+        if (longueur(mail)>1200):
             w=w+1
             i=i+1
         else:
@@ -159,10 +171,12 @@ def accuracy (liste_mail,modele,fpredit):
     print("non spam|spam:",not_win_2,"                            ")
     print("-------------------------------------------------------")
     print("nombre de mail test:", i,"                             ")
-    print("nombre de mail test ignoré (car nb mot>1600):", w,"    ")
+    print("nombre de mail test ignoré (car nb mot>1200):", w,"    ")
     print("-------------------------------------------------------")
     return (win_1+win_2)/(i-w)
 
+
+#Fonction permettant de tester le classifier
 #in : spam, nospam %
 #split spam/nospam in learning and test dataset by % given
 #out : accuracy between test and learning dataset
@@ -222,13 +236,13 @@ print(test(spam,nospam,0.5,apprend_modele,predit_mail))
 #plt.ylabel('Erreur')
 #plt.show()
 
-#Q2.4 voir code
 #tab=[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
 #tab_res=[]
 #for i in tab:
 #    tab_res.append(test(spam,nospam,i))
 #print (tab_res)
 
+#fonction permettant de renvoyer des mots sans caractère spéciaux...
 def liste_mot_mail(mail):
     liste_mot=[]
     mot =""
@@ -258,6 +272,7 @@ def mot_present(mail,mot):
 
 #print(mot_present(spam[0],"Wanna"))
 
+#Pour chaque mot de la collection, compte le nombre de mail dans lequel il apparait
 def compte_mot_coll(collection):
 	i=0
 	dico = {}
@@ -285,16 +300,16 @@ sorted_x = sorted(mondico, key=operator.itemgetter(1),reverse=True)
 #print(sorted_x)
 
 #Histogramme à créer
-ma_liste_coupe=split (sorted_x,0.10)
+#ma_liste_coupe=split (sorted_x,0.10)
 
-mot=[]
+#mot=[]
 occu=[]
 
-for i in ma_liste_coupe[0]:
-    mot.append(i[0])
-    occu.append(i[1])
+#for i in ma_liste_coupe[0]:
+#    mot.append(i[0])
+#    occu.append(i[1])
 
-#y=occu
+y=occu
 #plt.hist(occu)
 #axes = plt.gca()
 #axes.set_xlim(0, 400)
@@ -302,6 +317,7 @@ for i in ma_liste_coupe[0]:
 #plt.ylabel('occu')
 #plt.show()
 
+#Classifier en fonction du mot
 #ici int est inutile
 def apprend_modele2(spam,nonspam,int):
     dico_spam=compte_mot_coll(spam)
@@ -380,7 +396,7 @@ def distance (xi,xj):
     return sqrt((x1-x2)**2 + (y1-y2)**2)
 
 
-############################# A DEBUG #######################################
+###############################################################################
 def pij (email,i,j):
     numerateur=math.exp((-distance(email[i],email[j]))/(2*np.var(email[i])))
     denominateur=0.0
