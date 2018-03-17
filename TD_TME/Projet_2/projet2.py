@@ -14,6 +14,7 @@ def read(monfichier):
 
 dtrain=read("Dtrain.txt")
 testseq=read("test_seq.txt")
+distance=read("distances.txt")
 
 #print(dtrain[0])
 #print(testseq[0])
@@ -33,7 +34,6 @@ def n(i,a,liste):
 
 Alphabet=["A","C","D","E","F","G","H","I","K","L","M","N","P","Q","R","S","T","V","W","Y","-"]
 L=48
-N=114
 q=len(Alphabet)
 
 #Fonction renvoyant la matrice
@@ -142,7 +142,15 @@ plt.xlabel('I')
 plt.ylabel('Entropie')
 #plt.show()
 
-def f0(b):
+def eq6(lb):
+	sp=1
+	i=0
+	while (i<L-1):
+		sp=sp*w(i,lb[0][i],dtrain)
+		i+=1
+	return sp
+
+def eq8(b):
 	i=0
 	somme=0
 	while (i<L-1):
@@ -150,38 +158,96 @@ def f0(b):
 		i+=1
 	return (1.0/L)*somme
 
-def l(b):
+def eq7(lb):
+	sp=1
+	i=0
+	while (i<L-1):
+		sp=sp*eq8(lb[0][i])
+		i+=1
+	return sp
+
+def eq91(lb):
 	i=0
 	somme=0
 	while (i<L-1):
-		num=w(i,b[0][i],dtrain)
-		denom=f0(b[0][i])
+		num=w(i,lb[0][i],dtrain)
+		denom=eq8(lb[0][i])
 		somme+=math.log2(num/denom)
 		i+=1
 	return somme
 
-print(l(testseq))
+def eq92(lb):
+	x=eq6(lb)
+	y=eq7(lb)
+	return math.log2(x/y)
 
+print(eq91(testseq))
+#print(eq92(testseq))
 
 x=[]
 y=[]
 i=0
+N=114
 
 while i<N-L:
 	x.append(i)
-	j=i
-	testseq2=[]
-	chaine=""
-	while (j<N-L):
-		chaine+=testseq[0][j]
-		j+=1
-	testseq2.append(chaine)
-	print (testseq2)
-	y.append(l(testseq2))
 	i+=1
 
-plt.title("log-vraisemblance en fonction de sa premiere position i ")
-plt.plot(x, y)
-plt.xlabel('I')
-plt.ylabel('log-vraisemblance')
-plt.show()
+######## A VERIF avec la consigne #########
+#for a in x:
+#	chaine=""
+#	testseq2=[]
+#	j=a
+#	while (j<len(testseq[0])):
+#		chaine=chaine+testseq[0][j]
+#		j=j+1
+#	testseq2.append(chaine)
+#	print(testseq2)
+#	y.append(eq91(testseq2))
+##########################################
+
+#plt.title("log-vraisemblance en fonction de sa premiere position i ")
+#plt.plot(x, y)
+#plt.xlabel('I')
+#plt.ylabel('log-vraisemblance')
+#plt.show()
+
+###############PART 3#####################
+def eq10 (i,j,a,b,liste):
+	cpt=0
+	for prot in liste :
+		if ((prot[i]==a) and (prot[j]==b)):
+			cpt=cpt+1
+	return cpt
+
+def eq11 (i,j,a,b,liste):
+	numerateur= eq10(i,j,a,b,liste) + (1.0/q)
+	denominateur= len(liste) + q
+	return numerateur/denominateur
+
+def eq12 (i,j,liste):
+	somme=0.0
+	for a in Alphabet:
+		for b in Alphabet:
+			numerateur=eq11(i,j,a,b,liste)
+			denominateur=w(i,a,liste)*w(j,b,liste)
+			res=numerateur/denominateur
+			somme+=eq11(i,j,a,b,liste)*math.log2(res)
+	return somme
+
+print (eq12(0,1,dtrain))
+#print (distance[0])
+
+#############Probleme efficacite##########
+#def Trier():
+#	dm={}
+#	for i in range (48):
+#		print(i)
+#		for j in range (i+1,48):
+#			print(j)
+#			clef=str(i)+""+str(j)
+#			dm[clef]=eq12(i,j,dtrain)
+#	return dm
+#
+#print (Trier())
+##########################################
