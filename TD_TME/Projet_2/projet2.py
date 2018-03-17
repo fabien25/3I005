@@ -13,8 +13,11 @@ def read(monfichier):
 	return tab
 
 dtrain=read("Dtrain.txt")
+testseq=read("test_seq.txt")
 
 #print(dtrain[0])
+#print(testseq[0])
+
 #Fonction renvoyant nia
 def n(i,a,liste):
 	cpt=0
@@ -23,13 +26,14 @@ def n(i,a,liste):
 			cpt=cpt+1
 	return cpt
 
-print (n(46,"A",dtrain))
+#print (n(46,"A",dtrain))
 
 #Q1 - Calcul ni(a) | pour tout i appartenant [0,L-1]
 #		   | pour tout a appartenant Alphabet
 
 Alphabet=["A","C","D","E","F","G","H","I","K","L","M","N","P","Q","R","S","T","V","W","Y","-"]
 L=48
+N=114
 q=len(Alphabet)
 
 #Fonction renvoyant la matrice
@@ -54,7 +58,7 @@ def w(i,a,liste):
 	denominateur= len(liste) + q
 	return numerateur/denominateur
 
-#print(w(2,"C",dtrain))
+print(w(0,"-",dtrain))
 
 #Fonction renvoyant la matrice des poids
 def w_global(dtrain):
@@ -78,7 +82,8 @@ def s(i,liste):
 		tmp+=w(i,a,liste)*math.log2(w(i,a,liste))
 	return log_q+tmp
 
-#print(s(1,dtrain))
+print(s(0,dtrain))
+
 def s_global_trie (liste):
 	i=0
 	dico={}
@@ -135,12 +140,48 @@ plt.title("I en fonction de entropie")
 plt.plot(x, y)
 plt.xlabel('I')
 plt.ylabel('Entropie')
+#plt.show()
+
+def f0(b):
+	i=0
+	somme=0
+	while (i<L-1):
+		somme+=w(i,b,dtrain)
+		i+=1
+	return (1.0/L)*somme
+
+def l(b):
+	i=0
+	somme=0
+	while (i<L-1):
+		num=w(i,b[0][i],dtrain)
+		denom=f0(b[0][i])
+		somme+=math.log2(num/denom)
+		i+=1
+	return somme
+
+print(l(testseq))
+
+
+x=[]
+y=[]
+i=0
+
+while i<N-L:
+	x.append(i)
+	j=i
+	testseq2=[]
+	chaine=""
+	while (j<N-L):
+		chaine+=testseq[0][j]
+		j+=1
+	testseq2.append(chaine)
+	print (testseq2)
+	y.append(l(testseq2))
+	i+=1
+
+plt.title("log-vraisemblance en fonction de sa premiere position i ")
+plt.plot(x, y)
+plt.xlabel('I')
+plt.ylabel('log-vraisemblance')
 plt.show()
-
-
-
-
-
-
-
-
