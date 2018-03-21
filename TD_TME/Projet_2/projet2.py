@@ -136,10 +136,10 @@ while i<48:
 	y.append(dico[i])
 	i+=1
 
-plt.title("I en fonction de entropie")
-plt.plot(x, y)
-plt.xlabel('I')
-plt.ylabel('Entropie')
+#plt.title("I en fonction de entropie")
+#plt.plot(x, y)
+#plt.xlabel('I')
+#plt.ylabel('Entropie')
 #plt.show()
 
 def eq6(lb):
@@ -184,27 +184,29 @@ def eq92(lb):
 print(eq91(testseq))
 #print(eq92(testseq))
 
-x=[]
-y=[]
-i=0
-N=114
+def eqq4(L,listetest,listetrain):
+	cpt=0
+	chaine=""
+	listecpt=[]
+	listeeq91=[]
+	print(len(listetest[0]))
+	while (cpt<len(listetest[0])-L):
+		#print("ok")
+		chaine=listetest[0][cpt:cpt+L]
+		print (cpt+L)
+		#print (chaine)
+		listecpt.append(cpt)
+		listeeq91.append(eq91([chaine]))
+		cpt=cpt+1
+	return [listecpt,listeeq91]
 
-while i<N-L:
-	x.append(i)
-	i+=1
+#a=eqq4(48,testseq,dtrain)
 
-######## A VERIF avec la consigne #########
-#for a in x:
-#	chaine=""
-#	testseq2=[]
-#	j=a
-#	while (j<len(testseq[0])):
-#		chaine=chaine+testseq[0][j]
-#		j=j+1
-#	testseq2.append(chaine)
-#	print(testseq2)
-#	y.append(eq91(testseq2))
-##########################################
+#x=a[0]
+#y=a[1]
+
+#print (x)
+#print (y)
 
 #plt.title("log-vraisemblance en fonction de sa premiere position i ")
 #plt.plot(x, y)
@@ -238,16 +240,20 @@ def eq12 (i,j,liste):
 print (eq12(0,1,dtrain))
 #print (distance[0])
 
-#############Probleme efficacite##########
-#def Trier():
-#	dm={}
-#	for i in range (48):
-#		print(i)
-#		for j in range (i+1,48):
-#			print(j)
-#			clef=str(i)+""+str(j)
-#			dm[clef]=eq12(i,j,dtrain)
-#	return dm
-#
-#print (Trier())
-##########################################
+
+def Trier():
+	dm={}
+	for i in range (48):
+		print(i)
+		for j in range (i+1,48):
+			print(j)
+			clef=str(i)+"/"+str(j)
+			dm[clef]=eq12(i,j,dtrain)
+	return dm
+
+#Pour trier le dico par ordre decroissant
+import operator
+dico1=Trier()
+mondico=dico1.items()
+sorted_x = sorted(mondico, key=operator.itemgetter(1),reverse=False)
+#print(sorted_x)
