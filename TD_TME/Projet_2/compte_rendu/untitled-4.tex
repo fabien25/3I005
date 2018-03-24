@@ -19,21 +19,35 @@ Lors de ce projet, nous avons cherché à analyser statistiquement une famille d
 détectant :\\
 - les positions conservées,\\
 - les séquences appartenant à la même famille,\\
-- les corrélations entre colonnes différentes de l’alignement et leur relation avec les distances entres acides aminées dans la structure 3D d’une protéine representative de la famille.
+- les corrélations entre les différentes colonnes de l’alignement et leur relation avec les distances entres acides aminées.
 
 \section{Données}\noindent
-- Dtrain.txt contenant M=5643 séquences de protéines d'une même famille.\\
+- Dtrain.txt contient M=5643 séquences de protéines d'une même famille.\\
 Chaque séquence a pour longueur L= 48 positions et chaque acide aminé appartient à A = \{A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y,-\}.\\
-- testseq.txt contenant une séquence de longueur N = 114.\\
-- distances.txt contenant les distances entre paires d'acides aminées sous la forme (position 1, position 2, aa)
+- testseq.txt contient une séquence de longueur N = 114.\\
+- distances.txt contient les distances entre paires d'acides aminées sous forme position 1, position 2, aa
 
 \section{Modélisation par PSWM}
-Dans un premier temps, nous avons chargé nos données dans python grâce aux fonctions de lecture de fichier puis 
-nous avons définis une fonction n(i,a,liste) permettant de compter le nombre d'occurences d'acide aminée a à une position i donné.
-Suite à cela, 
+\subsection{Matrice de poids spécifiques des positions}
+Dans un premier temps, nous avons chargé nos données dans python grâce aux fonctions de lecture de fichier
+puis nous avons définis les fonctions n(i,a,liste) et w(i,a,liste) permettant respectivement de compter le nombre d'occurences 
+et de calculer le poids d'une acide aminée a à une position i donné.\\
+Les fonctions n\_global(liste) et w\_global(liste) utiliserons les fonctions précédentes pour la création des différentes matrices respectives
+pour chaque position i = 0, ..., L-1 et chaque acide aminée a appartenant à A.
+\subsection{Conservation}
+Une fois les différentes matrices obtenus, nous avons codé la fonction s(i,liste) calculant l'entropie relative en fonction d'une position i.\\
+Cette fonction est appelé par la fonction s\_global\_trie(liste) afin de déterminer les différentes positions
+qui ont un poid très élevé pour une acide aminée.\\
+ai(liste) se charge de determiner les 3 acides aminées les plus conservées.\\ 
 \\
+Les trois positions plus conservées et les acides aminées conservées:
 \\
+(31, 4.176827384837058), (46, 3.9862728301572674), (43, 3.875513964134912)\\
+'W', 'P', 'G'\\
 
+\includegraphics[scale=0.7]{Figure_1}
+\subsection{Evaluer une nouvelle séquence}
+Afin de décider si une nouvelle séquence fait partie de la même famille d'une protéine, 
 \section{Conclusion}
 
 \end{document}

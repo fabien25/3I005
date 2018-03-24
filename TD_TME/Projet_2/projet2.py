@@ -3,6 +3,7 @@ import operator
 import matplotlib.pyplot as plt
 import numpy as np
 
+###############PART 1#####################
 def read(monfichier):
 	read = open(monfichier, "r")
 	i = 0
@@ -17,8 +18,15 @@ dtrain=read("Dtrain.txt")
 testseq=read("test_seq.txt")
 distance=read("distances.txt")
 
-#print(dtrain[0])
-#print(testseq[0])
+Alphabet=["A","C","D","E","F","G","H","I","K","L","M","N","P","Q","R","S","T","V","W","Y","-"]
+L=48
+q=len(Alphabet)
+
+###############PART 2#####################
+
+##############Q1
+def matrice(liste):
+	return np.array(liste)
 
 #Fonction renvoyant nia
 def n(i,a,liste):
@@ -28,17 +36,14 @@ def n(i,a,liste):
 			cpt=cpt+1
 	return cpt
 
-#print (n(46,"A",dtrain))
+#Fonction renvoyant wia
+def w(i,a,liste):
+	numerateur= n(i,a,liste) + 1.0
+	denominateur= len(liste) + q
+	return numerateur/denominateur
 
-#Q1 - Calcul ni(a) | pour tout i appartenant [0,L-1]
-#		   | pour tout a appartenant Alphabet
-
-Alphabet=["A","C","D","E","F","G","H","I","K","L","M","N","P","Q","R","S","T","V","W","Y","-"]
-L=48
-q=len(Alphabet)
-
-#Fonction renvoyant la matrice
-def matrice(liste):
+#Fonction renvoyant la matrice des nombres d'occurence
+def n_global(liste):
 	liste1=[]
 	for a in Alphabet:
 		liste2=[]
@@ -49,33 +54,20 @@ def matrice(liste):
 		liste1.append(liste2)
 	return liste1
 
-matrice_dtrain=matrice(dtrain)
-
-#print(matrice_dtrain)
-
-#Fonction renvoyant wia
-def w(i,a,liste):
-	numerateur= n(i,a,liste) + 1.0
-	denominateur= len(liste) + q
-	return numerateur/denominateur
-
-print(w(0,"-",dtrain))
-
 #Fonction renvoyant la matrice des poids
-def w_global(dtrain):
+def w_global(liste):
 	result=0.0
 	liste1=[]
 	for a in Alphabet:
 		liste2=[]
 		i=0
 		while (i<48):
-			liste2.append(w(i,a,dtrain))
+			liste2.append(w(i,a,liste))
 			i=i+1
 		liste1.append(liste2)
 	return liste1
-
-#print(w_global(dtrain))
-
+	
+##############Q2
 def s(i,liste):
 	tmp=0
 	log_q=math.log2(q)
@@ -83,7 +75,7 @@ def s(i,liste):
 		tmp+=w(i,a,liste)*math.log2(w(i,a,liste))
 	return log_q+tmp
 
-print(s(0,dtrain))
+#print(s(0,dtrain))
 
 def s_global_trie (liste):
 	i=0
@@ -96,7 +88,7 @@ def s_global_trie (liste):
 	lr=[sorted_x[0],sorted_x[1],sorted_x[2]]
 	return lr
 
-print(s_global_trie(dtrain))
+#print(s_global_trie(dtrain))
 
 def s_global_dico (liste):
 	i=0
@@ -125,7 +117,7 @@ def ai(liste):
 		liste2.append(acide1)
 	return liste2
 
-print(ai(dtrain))
+#print(ai(dtrain))
 	
 x=[]
 y=[]
@@ -137,12 +129,13 @@ while i<48:
 	y.append(dico[i])
 	i+=1
 
-#plt.title("I en fonction de entropie")
+#plt.title("Entropie en fonction de i")
 #plt.plot(x, y)
 #plt.xlabel('I')
 #plt.ylabel('Entropie')
 #plt.show()
 
+##############Q3
 def eq6(lb):
 	sp=1
 	i=0
@@ -166,7 +159,8 @@ def eq7(lb):
 		sp=sp*eq8(lb[0][i])
 		i+=1
 	return sp
-
+	
+##############Q4
 def eq91(lb):
 	i=0
 	somme=0
