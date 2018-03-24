@@ -159,7 +159,7 @@ def eq7(lb):
 		sp=sp*eq8(lb[0][i])
 		i+=1
 	return sp
-	
+
 ##############Q4
 def eq91(lb):
 	i=0
@@ -279,7 +279,7 @@ def Q2_Q3(liste):
 		liste_mij.append(liste4)	   #Q3
 	return (liste_nb_occu,liste_poid,liste_mij)
 
-print (Q2_Q3(dtrain))
+#print (Q2_Q3(dtrain))
 
 def Trier():
 	dm={}
