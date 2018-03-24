@@ -1,6 +1,7 @@
 import math
 import operator
 import matplotlib.pyplot as plt
+import numpy as np
 
 def read(monfichier):
 	read = open(monfichier, "r")
@@ -37,13 +38,13 @@ L=48
 q=len(Alphabet)
 
 #Fonction renvoyant la matrice
-def matrice(dtrain):
+def matrice(liste):
 	liste1=[]
 	for a in Alphabet:
 		liste2=[]
 		i=0
 		while (i<48):
-			liste2.append(n(i,a,dtrain))
+			liste2.append(n(i,a,liste))
 			i=i+1
 		liste1.append(liste2)
 	return liste1
@@ -237,9 +238,54 @@ def eq12 (i,j,liste):
 			somme+=eq11(i,j,a,b,liste)*math.log2(res)
 	return somme
 
-print (eq12(0,1,dtrain))
-#print (distance[0])
 
+print (eq12(0,1,dtrain))
+#print (distance[0]) 
+
+############################################
+
+
+def eq11v2(z,liste):
+	numerateur= z + (1.0/q)
+	denominateur= len(liste) + q
+	return numerateur/denominateur
+
+def eq12v2 (z,liste,a,b,i,j):
+	somme=0.0
+	numerateur=z
+	denominateur=w(i,a,liste)*w(j,b,liste)
+	res=numerateur/denominateur
+	somme+=z*math.log2(res)
+	return somme
+
+def Q2_Q3(liste):
+	liste_nb_occu=[]
+	liste_poid=[]
+	liste_mij=[]
+
+	liste2=[]
+	liste3=[]
+	liste4=[]
+	for a in Alphabet:
+		for b in Alphabet:
+			i=1
+			while (i<L):
+				j=i+1
+				while (j<L):
+					print(a,b,i,j)
+					nijab=eq10(i,j,a,b,liste)
+					wijab=eq11v2(nijab,liste)
+					liste2.append(nijab)
+					liste3.append(wijab)
+					liste4.append(eq12v2(wijab,liste,a,b,i,j))
+					j=j+1
+				i=i+1
+		liste_nb_occu.append(liste2)   #Q2
+		liste_poid.append(liste3)	   #Q2
+		liste_mij.append(liste4)	   #Q3
+	return (liste_nb_occu,liste_poid,liste_mij)
+
+print (Q2_Q3(dtrain))
 
 def Trier():
 	dm={}
@@ -250,10 +296,3 @@ def Trier():
 			clef=str(i)+"/"+str(j)
 			dm[clef]=eq12(i,j,dtrain)
 	return dm
-
-#Pour trier le dico par ordre decroissant
-import operator
-dico1=Trier()
-mondico=dico1.items()
-sorted_x = sorted(mondico, key=operator.itemgetter(1),reverse=False)
-#print(sorted_x)

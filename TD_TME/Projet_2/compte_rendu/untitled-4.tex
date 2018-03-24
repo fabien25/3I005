@@ -1,0 +1,39 @@
+\documentclass[]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+\usepackage{graphicx}
+\graphicspath{{Figure/}} 
+\begin{document}
+
+
+\title{Mini projet 2 : Analyse statistique d’une famille de protéines}
+\author{Fabien Tang\\
+   Valentin Colliard}
+\date{2018}
+\maketitle
+\setcounter{chapter}{1}
+\section{Introduction}
+
+Lors de ce projet, nous avons cherché à analyser statistiquement une famille de protéines donnée par un alignement de séquence en 
+détectant :\\
+- les positions conservées,\\
+- les séquences appartenant à la même famille,\\
+- les corrélations entre colonnes différentes de l’alignement et leur relation avec les distances entres acides aminées dans la structure 3D d’une protéine representative de la famille.
+
+\section{Données}\noindent
+- Dtrain.txt contenant M=5643 séquences de protéines d'une même famille.\\
+Chaque séquence a pour longueur L= 48 positions et chaque acide aminé appartient à A = \{A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y,-\}.\\
+- testseq.txt contenant une séquence de longueur N = 114.\\
+- distances.txt contenant les distances entre paires d'acides aminées sous la forme (position 1, position 2, aa)
+
+\section{Modélisation par PSWM}
+Dans un premier temps, nous avons chargé nos données dans python grâce aux fonctions de lecture de fichier puis 
+nous avons définis une fonction n(i,a,liste) permettant de compter le nombre d'occurences d'acide aminée a à une position i donné.
+Suite à cela, 
+\\
+\\
+
+\section{Conclusion}
+
+\end{document}
