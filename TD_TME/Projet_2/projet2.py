@@ -16,6 +16,7 @@ def read(monfichier):
 
 dtrain=read("Dtrain.txt")
 testseq=read("test_seq.txt")
+testseq2=read("test_seq2.txt")
 distance=read("distances.txt")
 
 Alphabet=["A","C","D","E","F","G","H","I","K","L","M","N","P","Q","R","S","T","V","W","Y","-"]
@@ -184,8 +185,8 @@ def eqq4(L,listetest,listetrain):
 	chaine=""
 	listecpt=[]
 	listeeq9=[]
-	print(len(listetest[0]))
-	print("Attendre que le compteur atteint 114")
+	taille=len(listetest[0])
+	print("Attendre que le compteur atteint", taille)
 	while (cpt<len(listetest[0])-L):
 		#print("ok")
 		chaine=listetest[0][cpt:cpt+L]
@@ -200,7 +201,8 @@ def eqq4(L,listetest,listetrain):
 		cpt=cpt+1
 	return [listecpt,listeeq9]
 
-#a=eqq4(48,testseq,dtrain)
+print(testseq)
+a=eqq4(48,testseq,dtrain)
 
 #x=a[0]
 #y=a[1]
