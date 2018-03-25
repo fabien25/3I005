@@ -161,7 +161,7 @@ def eq7(lb):
 	return sp
 
 ##############Q4
-def eq91(lb):
+def eq9(lb):
 	i=0
 	somme=0
 	while (i<L-1):
@@ -171,29 +171,34 @@ def eq91(lb):
 		i+=1
 	return somme
 
-def eq92(lb):
-	x=eq6(lb)
-	y=eq7(lb)
-	return math.log2(x/y)
+#def eq92(lb):
+#	x=eq6(lb)
+#	y=eq7(lb)
+#	return math.log2(x/y)
 
-print(eq91(testseq))
+#print(eq9(testseq))
 #print(eq92(testseq))
 
 def eqq4(L,listetest,listetrain):
 	cpt=0
 	chaine=""
 	listecpt=[]
-	listeeq91=[]
+	listeeq9=[]
 	print(len(listetest[0]))
+	print("Attendre que le compteur atteint 114")
 	while (cpt<len(listetest[0])-L):
 		#print("ok")
 		chaine=listetest[0][cpt:cpt+L]
 		print (cpt+L)
 		#print (chaine)
 		listecpt.append(cpt)
-		listeeq91.append(eq91([chaine]))
+		e9=eq9([chaine])
+		if (e9>0):
+			print ("log v",e9)
+			print("position",cpt)
+		listeeq9.append(e9)
 		cpt=cpt+1
-	return [listecpt,listeeq91]
+	return [listecpt,listeeq9]
 
 #a=eqq4(48,testseq,dtrain)
 
@@ -232,8 +237,7 @@ def eq12 (i,j,liste):
 			somme+=eq11(i,j,a,b,liste)*math.log2(res)
 	return somme
 
-
-print (eq12(0,1,dtrain))
+#print (eq12(0,1,dtrain))
 #print (distance[0]) 
 
 ############################################
