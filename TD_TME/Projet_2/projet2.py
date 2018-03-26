@@ -21,6 +21,7 @@ distance=read("distances.txt")
 
 Alphabet=["A","C","D","E","F","G","H","I","K","L","M","N","P","Q","R","S","T","V","W","Y","-"]
 L=48
+M=len(dtrain)
 q=len(Alphabet)
 
 ###############PART 2#####################
@@ -186,7 +187,7 @@ def eqq4(L,listetest,listetrain):
 	listecpt=[]
 	listeeq9=[]
 	taille=len(listetest[0])
-	print("Attendre que le compteur atteint", taille)
+	#print("Attendre que le compteur atteint", taille)
 	while (cpt<len(listetest[0])-L):
 		#print("ok")
 		chaine=listetest[0][cpt:cpt+L]
@@ -201,8 +202,8 @@ def eqq4(L,listetest,listetrain):
 		cpt=cpt+1
 	return [listecpt,listeeq9]
 
-print(testseq)
-a=eqq4(48,testseq,dtrain)
+#print(testseq)
+#a=eqq4(48,testseq,dtrain)
 
 #x=a[0]
 #y=a[1]
@@ -231,10 +232,14 @@ def eq11 (i,j,a,b,liste):
 
 def eq12 (i,j,liste):
 	somme=0.0
+	sa=0
+	sb=0
 	for a in Alphabet:
 		for b in Alphabet:
 			numerateur=eq11(i,j,a,b,liste)
 			denominateur=w(i,a,liste)*w(j,b,liste)
+			sa+=numerateur
+			sb+=denominateur
 			res=numerateur/denominateur
 			somme+=eq11(i,j,a,b,liste)*math.log2(res)
 	return somme
@@ -243,56 +248,109 @@ def eq12 (i,j,liste):
 #print (distance[0]) 
 
 ############################################
+def liste_to_mat(train):
+	mat=np.chararray((len(train), L));
+	for i in range(len(train)):
+		for j in range(len(train[i])):
+			mat[i][j]=train[i][j]
+	return mat
+
+def eq10g(mat):
+	dict_nijab={}
+	for i in range (L):
+		for j in range (i+1,L):
+			for a in Alphabet:
+				for b in Alphabet:
+					r1 = (mat[:,i] == a)
+					r2 = (mat[:,j] == b)
+					r1r2= np.logical_and(r1,r2).sum(0)
+					dict_nijab[(a,b,i,j)]=r1r2
+	return dict_nijab
+
+#mat_dtrain=liste_to_mat(dtrain)
+#d=eq10g(mat_dtrain)
+#print(d)
+
+def eq11g(mat):
+	dict_nijab=eq10g(mat)
+	dict_wijab={}
+	for i in range (L):
+		for j in range (i+1,L):
+			for a in Alphabet:
+				for b in Alphabet:
+					numerateur= dict_nijab[(a,b,i,j)] + (1.0/q)
+					denominateur=M+q
+					dict_wijab[(a,b,i,j)]=numerateur/denominateur
+	return dict_wijab
+
+#mat_dtrain=liste_to_mat(dtrain)
+#d1=eq11g(mat_dtrain)
+#print(d1)
+
+def dict_nia(mat):
+	dict_nia={}
+	for i in range (L):
+		for a in Alphabet:
+			#print (i,a)
+			dict_nia[(i,a)]=n(i,a,dtrain)
+	return dict_nia
+
+#mat_dtrain=liste_to_mat(dtrain)
+#d2=dict_nia(mat_dtrain)
+#print (d2)
+
+def dict_wia(mat):
+	dictnia=dict_nia(mat)
+	dict_wia={}
+	for i in range (L):
+		for a in Alphabet:
+			numerateur = dictnia[(i,a)] + 1.0
+			denominateur= M + q
+			dict_wia[i,a]=numerateur/denominateur
+	return dict_wia
+
+#mat_dtrain=liste_to_mat(dtrain)
+#d3=dict_wia(mat_dtrain)
+#print (d3)
+
+def eq12g(mat):
+	i=0
+	dictwia=dict_wia(mat)
+	dict_wijab=eq11g(mat)
+	matij=[]
+	for i in range (L):
+		matij.append([])
+		for j in range (L):
+			matij[i].append(-1)
 
 
-def eq11v2(z,liste):
-	numerateur= z + (1.0/q)
-	denominateur= len(liste) + q
-	return numerateur/denominateur
+	for i in range (L):
+		for j in range (i+1,L):
+			somme=0
+			sa=0
+			sb=0
+			for a in Alphabet:
+				for b in Alphabet:
+					#print  (a,b,i,j)
+					#numerateur=dict_wijab[(a,b,i,j)]
+					numerateur=eq11(i,j,a,b,dtrain)
+					denominateur=dictwia[(i,a)]*dictwia[(j,b)]
+					sa+=numerateur
+					res=numerateur/denominateur
+					somme+=numerateur*math.log2(res)
+			matij[i][j]=somme
+	return np.array(matij)
 
-def eq12v2 (z,liste,a,b,i,j):
-	somme=0.0
-	numerateur=z
-	denominateur=w(i,a,liste)*w(j,b,liste)
-	res=numerateur/denominateur
-	somme+=z*math.log2(res)
-	return somme
+print("----------")
+mat_dtrain=liste_to_mat(dtrain)
+array1=eq12g(mat_dtrain)
+print (array1)
 
-def Q2_Q3(liste):
-	liste_nb_occu=[]
-	liste_poid=[]
-	liste_mij=[]
-
-	liste2=[]
-	liste3=[]
-	liste4=[]
+""""
 	for a in Alphabet:
 		for b in Alphabet:
-			i=1
-			while (i<L):
-				j=i+1
-				while (j<L):
-					print(a,b,i,j)
-					nijab=eq10(i,j,a,b,liste)
-					wijab=eq11v2(nijab,liste)
-					liste2.append(nijab)
-					liste3.append(wijab)
-					liste4.append(eq12v2(wijab,liste,a,b,i,j))
-					j=j+1
-				i=i+1
-		liste_nb_occu.append(liste2)   #Q2
-		liste_poid.append(liste3)	   #Q2
-		liste_mij.append(liste4)	   #Q3
-	return (liste_nb_occu,liste_poid,liste_mij)
-
-#print (Q2_Q3(dtrain))
-
-def Trier():
-	dm={}
-	for i in range (48):
-		print(i)
-		for j in range (i+1,48):
-			print(j)
-			clef=str(i)+"/"+str(j)
-			dm[clef]=eq12(i,j,dtrain)
-	return dm
+			numerateur=eq11(i,j,a,b,liste)
+			denominateur=w(i,a,liste)*w(j,b,liste)
+			res=numerateur/denominateur
+			somme+=eq11(i,j,a,b,liste)*math.log2(res)
+	return somme"""
