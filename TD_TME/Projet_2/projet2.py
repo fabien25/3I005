@@ -19,7 +19,7 @@ testseq=read("test_seq.txt")
 testseq2=read("test_seq2.txt")
 distance=read("distances.txt")
 
-Alphabet=["A","C","D","E","F","G","H","I","K","L","M","N","P","Q","R","S","T","V","W","Y","-"]
+Alphabet=['A','C','D','E','F','G','H','I','K','L','M','N','P','Q','R','S','T','V','W','Y','-']
 L=48
 M=len(dtrain)
 q=len(Alphabet)
@@ -238,38 +238,31 @@ def eq12 (i,j,liste):
 		for b in Alphabet:
 			numerateur=eq11(i,j,a,b,liste)
 			denominateur=w(i,a,liste)*w(j,b,liste)
-			sa+=numerateur
-			sb+=denominateur
 			res=numerateur/denominateur
 			somme+=eq11(i,j,a,b,liste)*math.log2(res)
 	return somme
 
-#print (eq12(0,1,dtrain))
-#print (distance[0]) 
-
+print(eq12(0,1,dtrain))
 ############################################
 def liste_to_mat(train):
 	mat=np.chararray((len(train), L));
 	for i in range(len(train)):
 		for j in range(len(train[i])):
 			mat[i][j]=train[i][j]
-	return mat
+	return mat.astype("U8")
 
 def eq10g(mat):
 	dict_nijab={}
+	print("Prend ~8min // décommenter le print de la boucle de la fonction eq10g et attendre le print (46 47 - -)")
 	for i in range (L):
 		for j in range (i+1,L):
 			for a in Alphabet:
 				for b in Alphabet:
-					r1 = (mat[:,i] == a)
-					r2 = (mat[:,j] == b)
-					r1r2= np.logical_and(r1,r2).sum(0)
-					dict_nijab[(a,b,i,j)]=r1r2
+					r1 = (mat[:,i] == a) #[true, true, false, false false][false,true,true...]
+					r2 = (mat[:,j] == b) #[true, true, false, false false][true,false...]
+					#print(i,j,a,b)
+					dict_nijab[(a,b,i,j)]= np.logical_and(r1, r2).sum(0)  #[true, true, false, false false]
 	return dict_nijab
-
-#mat_dtrain=liste_to_mat(dtrain)
-#d=eq10g(mat_dtrain)
-#print(d)
 
 def eq11g(mat):
 	dict_nijab=eq10g(mat)
@@ -278,14 +271,10 @@ def eq11g(mat):
 		for j in range (i+1,L):
 			for a in Alphabet:
 				for b in Alphabet:
-					numerateur= dict_nijab[(a,b,i,j)] + (1.0/q)
-					denominateur=M+q
+					numerateur= dict_nijab[(a,b,i,j)] + (1.0/q) 
+					denominateur=(1.0* M + q)					
 					dict_wijab[(a,b,i,j)]=numerateur/denominateur
 	return dict_wijab
-
-#mat_dtrain=liste_to_mat(dtrain)
-#d1=eq11g(mat_dtrain)
-#print(d1)
 
 def dict_nia(mat):
 	dict_nia={}
@@ -294,10 +283,6 @@ def dict_nia(mat):
 			#print (i,a)
 			dict_nia[(i,a)]=n(i,a,dtrain)
 	return dict_nia
-
-#mat_dtrain=liste_to_mat(dtrain)
-#d2=dict_nia(mat_dtrain)
-#print (d2)
 
 def dict_wia(mat):
 	dictnia=dict_nia(mat)
@@ -309,48 +294,56 @@ def dict_wia(mat):
 			dict_wia[i,a]=numerateur/denominateur
 	return dict_wia
 
-#mat_dtrain=liste_to_mat(dtrain)
-#d3=dict_wia(mat_dtrain)
-#print (d3)
-
 def eq12g(mat):
-	i=0
 	dictwia=dict_wia(mat)
 	dict_wijab=eq11g(mat)
 	matij=[]
-	for i in range (L):
-		matij.append([])
-		for j in range (L):
-			matij[i].append(-1)
-
-
+	matij=[[-1 for x in range (L)] for y in range(L)]
 	for i in range (L):
 		for j in range (i+1,L):
 			somme=0
-			sa=0
-			sb=0
 			for a in Alphabet:
 				for b in Alphabet:
-					#print  (a,b,i,j)
-					#numerateur=dict_wijab[(a,b,i,j)]
-					numerateur=eq11(i,j,a,b,dtrain)
-					denominateur=dictwia[(i,a)]*dictwia[(j,b)]
-					sa+=numerateur
-					res=numerateur/denominateur
-					somme+=numerateur*math.log2(res)
+					num=dict_wijab[(a,b,i,j)]
+					somme+= num * math.log(num/(dictwia[(i,a)]*dictwia[(j,b)]), 2)
 			matij[i][j]=somme
-	return np.array(matij)
+	return matij
 
-print("----------")
-mat_dtrain=liste_to_mat(dtrain)
-array1=eq12g(mat_dtrain)
-print (array1)
 
-""""
-	for a in Alphabet:
-		for b in Alphabet:
-			numerateur=eq11(i,j,a,b,liste)
-			denominateur=w(i,a,liste)*w(j,b,liste)
-			res=numerateur/denominateur
-			somme+=eq11(i,j,a,b,liste)*math.log2(res)
-	return somme"""
+###########To Complete#################
+import operator
+
+def Trier(mat):
+	r=[]
+	dico_nijab=eq10g(mat) #~8min
+	mondico=dico_nijab.items()
+	sorted_x = sorted(mondico, key=operator.itemgetter(1),reverse=True) 
+	#renvoie une liste des elems du dico trié
+	#exemple [('bonjour',2),('toto',1),...]
+	#dans notre cas, [((a,b,i,j),M),...]
+	for i in range(50):
+		a=sorted_x[i][2]
+		b=sorted_x[i][3]
+		z=[a,b]
+		r.append(z)
+	frac(r)
+
+def frac(res):
+	contact=[]
+	# print(result)
+	liste_frac=[]
+	x=np.arange(10);
+	plt.title("fraction des paires sélectionnées qui ont une distance plus petit que 8 (= qui sont des contacts)")
+	plt.xlabel("nombre de paires considerées")
+	plt.ylabel("Fraction des paires")
+	plt.plot(res)
+	plt.show()
+########################################
+#mat_dtrain=liste_to_mat(dtrain)
+#print(distance)
+#mat12=eq12g(mat_dtrain)
+#print (mat12[0][1]) #affiche bien 0.404
+#dic10=eq10g(mat_dtrain)
+#print(dic10[('R','F',0,3)]) #affiche 193
+#print (eq10(0,3,'R','F',dtrain)) #affiche bien 193
+############################################

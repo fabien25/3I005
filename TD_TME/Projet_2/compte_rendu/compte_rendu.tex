@@ -77,6 +77,9 @@ Pour cela, nous avons définis:\\
 - la fonction eq10 comptant le nombre de séquences ayant un acide aminé a en position i et un acide aminé b en position j,\\
 - la fonction eq11 calculant le poids pour 2 acides aminés aux positions i et j,\\
 - la fonction eq12 calculant l'information mutuelle (qui permet de quantifier les corrélations).\\
+Les fonctions eq10g, eq11g et eq12g réaliseront les mêmes opérations que précédentes mais pour chaque paire de positions 0 <= i < j < L
+sur une matrice de dtrain obtenu à l'aide de la fonction liste\_to\_mat(dtrain).\\
+Attention: la fonction eq10g (utilisé par les fonctions eq11g et eq12g) prend du temps à réaliser sa tache(environt 8min).
 \\
 \\
 \section{Conclusion}
