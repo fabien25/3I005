@@ -16,10 +16,10 @@
 Lors de ce projet, nous avons cherché à analyser statistiquement une famille de protéines donnée par un alignement de séquence en détectant :\\
 - les positions conservées,\\
 - les séquences appartenant à la même famille,\\
-- les corrélations entre colonnes différentes de l’alignement et leur relation avec les distances entres acides aminés dans la structure 3D d’une protéine representative de la famille.
+- les corrélations entre colonnes différentes de l’alignement et leur relation avec les distances entres acides aminés dans la structure 3D d’une protéine représentative de la famille.
 
 \section{Données}\noindent
-Afin d’étudier les données fournis, nous avons créé une fonction de lecture de nos fichiers:\\
+Afin d’étudier les données fournies, nous avons créé une fonction de lecture de nos fichiers:\\
 - Dtrain.txt contenant M=5643 séquences de protéines d'une même famille.\\
 Chaque séquence a pour longueur L= 48 positions et chaque acide aminé appartient à A = \{A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y,-\} (q=21=longueur de A).\\
 - testseq.txt contenant une séquence de longueur N = 114.\\
@@ -32,11 +32,11 @@ Afin d'obtenir cette matrice, nous avons défini les fonctions n(i,a,liste) et w
 et de calculer le poids d'un acide aminé a à une position i donnée.\\
 Les fonctions n\_global(liste) et w\_global(liste) utiliserons ainsi les fonctions précédentes pour la création de la matrice pour chaque position i = 0, ..., L-1 et chaque acide aminé a appartenant à A.
 \subsection{Conservation}
-Une fois la matrice obtenu, nous avons codé la fonction s(i,liste) calculant l'entropie relative en fonction d'une position i.\\
+Une fois la matrice obtenue, nous avons codé la fonction s(i,liste) calculant l'entropie relative en fonction d'une position i.\\
 (entropie= 0, aucune position n'est conservée,\\
 entropie=4.38, l'information est complètement sauvegardé)\\
-Cette fonction est par la suite appelée par la fonction s\_global\_trie(liste) afin de déterminer les différentes positions qui ont un poid élevé.\\
-Enfin, nous avons défini la fonction ai(liste) qui se charge de determiner les 3 acides aminés les plus conservées.\\ 
+Cette fonction est par la suite appelée par la fonction s\_global\_trie(liste) afin de déterminer les différentes positions qui ont un poids élevé.\\
+Enfin, nous avons défini la fonction ai(liste) qui se charge de déterminer les 3 acides aminés les plus conservés.\\ 
 Résultats:\\
 \includegraphics[scale=0.7]{Figure_1}
 
@@ -53,35 +53,43 @@ Position & Entropie & Acide aminé\\
 \end{tabular}
 
 \subsection{Evaluer une nouvelle séquence}
-Dans un premier temps, nous avons calculé la probabilité qu'une séquence b appartienne à une même famille de protéine (Dtrain).\\
-La fonction eq6 calcule cette probabilité en réalisant le produit des poids pour chaque acide aminé présent dans b par rapport à la famille en question.\\
-Pour décider si cette probabilité est “assez grande” pour dire que b appartient à la famille donné, nous avons
+Dans un second temps, nous avons calculé la probabilité qu'une séquence b appartienne à une même famille de protéine (Dtrain)
+grâce à la fonction eq6 qui réalise le produit des poids pour chaque acide aminé présent dans b par rapport à la famille en question.\\
+Pour décider si cette probabilité est “assez grande” pour dire que b appartient à la famille donnée, nous avons
 comparé nos résultats avec un modèle nul qui n'est pas spécifique dans les positions servant de base de comparaison.\\
 \\
-Pour cela, nous avons implémenté les fonctions suivantes:\\
+Pour se faire, nous avons implémenté les fonctions:\\
 \\
 - eq8 qui calcule la fréquence de chaque acide aminé de b dans la famille de protéine sans regarder la position i en réalisant la somme des poids des acides aminés de b divisé par la longueur L.\\
 - eq7 qui calcule le produit des fréquences à l'aide de l'eq8 pour chaque acide aminé de b.\\
 - eq9 qui compare le modèle spécifique (PSWM) avec le modèle nul en calculant le log de la vraisemblance, soit la somme des log2 des poids de chaque acide aminé de b divisé par la fréquence de chaque b sans regarder la position i.\\
-- eqq4 qui pour chaque pour chaque première position i = 0, ...,N - L calcule le log de la vraisemblance.\\
+Enfin, nous avons déterminé si il y a des sous-séquences de la famille définie par Dtrain (dans testseq) grâce à l'eqq4 qui pour chaque pour chaque première position i = 0, ...,N-L calcule le log de la vraisemblance.\\
 \\
 Résultats:\\
 \includegraphics[scale=0.7]{Figure_2}
 
-D'après nous observons un pic à i=13 pour une log de vraisemblance égal à 72.23472837323038.
-Cela nous permet donc d'en déduire que la séquence de position 13 à 13+L correspond à une sous séquence de la famille définie par Dtrain.
+D'après nos resultats, nous observons un pic à i=13 pour un log de vraisemblance égal à 72.23472837323038.
+Cela nous permet  d'en déduire que la séquence de position 13 à 13+L correspond à une sous séquence de la famille définie par Dtrain.
 
 \section{Coévolution de résidues en contact}
-Dans cette seconde partie, nous avons amélioré notre modèle en permettant la détection de corrélations entre les occurences des acides aminés pour 2 positions données.\\
-Pour cela, nous avons définis:\\
+Dans cette seconde partie, nous avons amélioré notre modèle en permettant la détection de corrélations entre les occurrences des acides aminés pour 2 positions données.
+Pour cela, nous avons défini:\\
 - la fonction eq10 comptant le nombre de séquences ayant un acide aminé a en position i et un acide aminé b en position j,\\
 - la fonction eq11 calculant le poids pour 2 acides aminés aux positions i et j,\\
 - la fonction eq12 calculant l'information mutuelle (qui permet de quantifier les corrélations).\\
 Les fonctions eq10g, eq11g et eq12g réaliseront les mêmes opérations que précédentes mais pour chaque paire de positions 0 <= i < j < L
-sur une matrice de dtrain obtenu à l'aide de la fonction liste\_to\_mat(dtrain).\\
-Attention: la fonction eq10g (utilisé par les fonctions eq11g et eq12g) prend du temps à réaliser sa tache(environt 8min).
+sur une matrice de Dtrain obtenu à l'aide de la fonction liste\_to\_mat(dtrain).\\
+Remarque: la fonction eq10g (utilisé par les fonctions eq11g et eq12g) prend du temps à se réaliser (environ 5min).
 \\
 \\
+Pour finir, la fonction func\_4 trie les 50 paires de positions avec les valeurs M plus grandes puis cherche les distances associées dans le fichier distances.txt.
+Il calcule ensuite la fraction des paires sélectionnées qui ont une distance plus petite que 8 afin de générer un graphique de cette fraction en fonction du nombre de paires considerées.\\
+\\
+Résultats:\\
+\includegraphics[scale=0.7]{Figure_3}
+
+Nous remarquerons ainsi d'après le graphique que plus le nombre de paires considerées est important, plus la fraction des paires qui sont des contacts est importante.
+
 \section{Conclusion}
 En conclusion, ce projet nous a permis de réaliser une analyse statistique d'une famille de protéines en détectant:\\
 - les positions conservées grâce au calcul l'entropie relative en fonction de la position,\\

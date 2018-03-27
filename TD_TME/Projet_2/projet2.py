@@ -260,7 +260,7 @@ def eq10g(mat):
 				for b in Alphabet:
 					r1 = (mat[:,i] == a) #[true, true, false, false false][false,true,true...]
 					r2 = (mat[:,j] == b) #[true, true, false, false false][true,false...]
-					#print(i,j,a,b)
+					print(i,j,a,b)
 					dict_nijab[(a,b,i,j)]= np.logical_and(r1, r2).sum(0)  #[true, true, false, false false]
 	return dict_nijab
 
@@ -309,36 +309,45 @@ def eq12g(mat):
 			matij[i][j]=somme
 	return matij
 
-
 ###########To Complete#################
-import operator
-
-def Trier(mat):
-	r=[]
-	dico_nijab=eq10g(mat) #~8min
-	mondico=dico_nijab.items()
-	sorted_x = sorted(mondico, key=operator.itemgetter(1),reverse=True) 
-	#renvoie une liste des elems du dico trié
-	#exemple [('bonjour',2),('toto',1),...]
-	#dans notre cas, [((a,b,i,j),M),...]
+def func_4(mat):
+	mij=eq12g(mat)
+	index = np.argsort(mij)
+	liste_retour = []
+	liste_b=[]
+	step = [0.0] * 5
+	resultat = [0.0] * 5
+	for i in range(L-1):
+		for j in range(i+1, L):
+			liste_b.append((i, j))
 	for i in range(50):
-		a=sorted_x[i][2]
-		b=sorted_x[i][3]
-		z=[a,b]
-		r.append(z)
-	frac(r)
+			liste_retour.append(liste_b[index[0][len(mij[0])-1-i]])
+	#Calcul de la fraction des paires qui sont des contacts
+	for i in range(len(step)):
+		step[i] = (len(liste_retour)/10) + (len(liste_retour)/10)*i
+	for i in range(len(step)):
+		res = liste_retour[0:int(step[i])]
+		for j in range(len(res)):
+			index = liste_b.index((int(res[j][0]), int(res[j][1])))
+			#si la distance est plus petit que 8
+			if float(distance[index][2]) < 8.0:
+				resultat[i] = resultat[i] + 1.0
+		resultat[i] = resultat[i] / step[i]
 
-def frac(res):
-	contact=[]
-	# print(result)
-	liste_frac=[]
-	x=np.arange(10);
-	plt.title("fraction des paires sélectionnées qui ont une distance plus petit que 8 (= qui sont des contacts)")
-	plt.xlabel("nombre de paires considerées")
-	plt.ylabel("Fraction des paires")
-	plt.plot(res)
+	#Affichage du graph
+	x = np.arange(10);
+	for i in range(len(step)):
+		step[i]=int(step[i])
+	plt.title("Fraction en fonction du nombre de paires considerées")
+	plt.xlabel("Nb paires considerées")
+	plt.ylabel("Fraction")
+	plt.xticks(x, step)
+	plt.plot(resultat)
 	plt.show()
-########################################
+
+############################################
+##Test de la partie III##
+##Prend du temps ~4/5min##
 #mat_dtrain=liste_to_mat(dtrain)
 #print(distance)
 #mat12=eq12g(mat_dtrain)
@@ -346,4 +355,5 @@ def frac(res):
 #dic10=eq10g(mat_dtrain)
 #print(dic10[('R','F',0,3)]) #affiche 193
 #print (eq10(0,3,'R','F',dtrain)) #affiche bien 193
+#func_4(mat_dtrain) #plot graph Q4
 ############################################
