@@ -309,7 +309,6 @@ def eq12g(mat):
 			matij[i][j]=somme
 	return matij
 
-###########To Complete#################
 def func_4(mat):
 	mij=eq12g(mat)
 	index = np.argsort(mij)
@@ -333,15 +332,11 @@ def func_4(mat):
 			if float(distance[index][2]) < 8.0:
 				resultat[i] = resultat[i] + 1.0
 		resultat[i] = resultat[i] / step[i]
-
 	#Affichage du graph
-	x = np.arange(10);
-	for i in range(len(step)):
-		step[i]=int(step[i])
 	plt.title("Fraction en fonction du nombre de paires considerées")
 	plt.xlabel("Nb paires considerées")
 	plt.ylabel("Fraction")
-	plt.xticks(x, step)
+	plt.xticks(np.arange(10), step)
 	plt.plot(resultat)
 	plt.show()
 
