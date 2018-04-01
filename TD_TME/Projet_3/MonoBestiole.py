@@ -3,23 +3,32 @@ import numpy as np
 import pyAgrum as gum
 from CdM import CdM
 import utils
+import matplotlib.pyplot as plt
 
-class MouseInMaze(CdM):
+class MonoBestiole(CdM):
   """
   Class virtuelle représentant une Chaîne de Markov
   """
 
-  def __init__(self):
+  def __init__(self,N,p,q):
     """
     Constructeur. En particulier, initalise le dictionaire stateToIndex
     """
-    super(MouseInMaze, self).__init__()
+    self.N=N
+    self.p=p
+    self.q=q
+    super(MonoBestiole, self).__init__()    
 
   def get_states(self):
     """
     :return: un ensemble d'états énumérable (list, n-uple, etc.)
     """
-    return [1,2,3,4,5,6]
+    lr=[]
+    i=1
+    while (i<self.N+1):
+        lr.append(i)
+        i=i+1
+    return lr
 
   def get_transition_distribution(self, state):
     """
@@ -27,26 +36,19 @@ class MouseInMaze(CdM):
     :return: un dictionnaire {etat:proba} représentant l'ensemble des états atteignables à partir de state et leurs
     probabilités
     """
-    if state==1:
-    	return {1:0.5, 2: 0.5}
-    elif state==2:
-    	return {1:0.5, 4: 0.5}
-    elif state==3:
-    	return {5:0.25, 6: 0.25, 1:0.25, 2: 0.25}
-    elif state==4:
-    	return {3:1}
-    elif state==5:
-    	return {5:1}
-    elif state==6:
-    	return {6:1}
+    if (state==1):
+        return {1:self.q, 2: self.p}
+    elif (state==self.N):
+        return {self.N-1:self.q, self.N: self.p}
     else:
-    	raise IndexError
+        return {state-1:self.q,state+1:self.p}
+    	#raise IndexError
 
   def get_initial_distribution(self):
     """
     :return: un dictionnaire représentant la distribution à t=0 {etat:proba}
     """
-    return {2:1}
+    return self.get_transition_distribution(1)
 
 
   def __len__(self):
@@ -60,3 +62,14 @@ class MouseInMaze(CdM):
 
   def show_transition_matrix(self):
     utils.show_matrix(self.get_transition_matrix())
+
+  def show_distribution(self, distribution):
+    fig, ax = plt.subplots()
+    fig.set_size_inches(5, 1.5)
+    ax.set_yticks([])
+    ax.set_xticklabels(self.get_states())
+    lr=[]
+    for (k,v) in self.stateToIndex.items():
+        lr.append(v)
+    ax.set_xticks(lr)
+    ax.imshow(self.distribution_to_vector(distribution).reshape(1, 7), cmap=utils.ProbaMap)
