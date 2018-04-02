@@ -157,22 +157,43 @@ class CdM (object):
     liste1=self.get_communication_classes()
     liste2=self.get_absorbing_classes()
     return (liste1==liste2)
+
 ##########################################################
   def is_aperiodic(self):
+    liste=[]
     for i in self.get_states():
       dico=self.get_transition_distribution(i)
-
+      dst = 0;
       for (k,v) in dico.items():
         #si il y a un cycle sur lui même
         if (k==i):
           return True
-        ###TO DO
+        #Le reste ci-dessous est faux.
+        else:
+            dst+=1
+      liste.append(dst)
+    for e1 in liste:
+      for e2 in liste:
+        if(e1 != e2):
+          return True
+    return False
 
   def get_periodicity(self):
-    for i in self.get_states():
-      dico=self.get_transition_distribution(i)
-      for (k,v) in dico.items():
-        #si il y a un cycle sur lui même
-        if (k==i):
-          return 1
-        ###TO DO
+    boole = self.is_aperiodic()
+    if (boole):
+      return 1
+    else:
+      liste=[]
+      for i in self.get_states():
+        dico=self.get_transition_distribution(i)
+        for (k,v) in dico.items():
+          dst=0
+          #si il y a un cycle sur lui même
+          if (k==i):
+            return 1
+          #Le reste ci-dessous est faux.
+          else:
+            dst+=1
+        liste.append(dst)
+      sorted(liste)
+    return liste[0]
