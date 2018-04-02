@@ -123,3 +123,56 @@ class CdM (object):
       current_node+=1
     s+="}"
     gnb.showDot(s)
+
+
+######Q8- A REVOIR #######################################
+  def get_communication_classes(self):
+    lr=[]
+    s=set()
+    for i in self.get_states():
+      dico=self.get_transition_distribution(i)
+      boole=0
+      for (k,v) in dico.items():
+        if ((k==i) and (v==1)):
+          boole=1
+          lr.append({k})
+          break;
+      if (boole==0):
+        s.add(i)
+    lr.append(s)
+    return lr
+
+  def get_absorbing_classes(self):
+    liste=self.get_communication_classes()
+    lr=[]
+    for i in liste:
+      if (len(i)==1):
+        lr.append(i)
+    if (len(lr)==0):
+      return liste
+    else:
+      return lr
+
+  def is_irreducible(self):
+    liste1=self.get_communication_classes()
+    liste2=self.get_absorbing_classes()
+    return (liste1==liste2)
+##########################################################
+  def is_aperiodic(self):
+    for i in self.get_states():
+      dico=self.get_transition_distribution(i)
+
+      for (k,v) in dico.items():
+        #si il y a un cycle sur lui même
+        if (k==i):
+          return True
+        ###TO DO
+
+  def get_periodicity(self):
+    for i in self.get_states():
+      dico=self.get_transition_distribution(i)
+      for (k,v) in dico.items():
+        #si il y a un cycle sur lui même
+        if (k==i):
+          return 1
+        ###TO DO

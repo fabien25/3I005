@@ -28,11 +28,11 @@ class MouseInMaze(CdM):
     probabilités
     """
     if state==1:
-    	return {1:0.5, 2: 0.5}
+    	return {1:0.5, 2:0.5}
     elif state==2:
-    	return {1:0.5, 4: 0.5}
+    	return {1:0.5, 4:0.5}
     elif state==3:
-    	return {5:0.25, 6: 0.25, 1:0.25, 2: 0.25}
+    	return {5:0.25, 6:0.25, 1:0.25, 2:0.25}
     elif state==4:
     	return {3:1}
     elif state==5:
