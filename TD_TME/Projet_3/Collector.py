@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-
 class Collector:
   def initialize(self, cdm, max_iter):
     """
