@@ -72,13 +72,13 @@ class CdM (object):
           dico[k]=vector[v]
     return dico
 
-  def show_distribution(self,state):
-    lr=[]
-    for (k,v) in self.stateToIndex.items():
-      lr.append(0)
-    for (k,v) in state.items():
-      lr[self.stateToIndex[k]]=v
-    return lr
+  # def show_distribution(self,state):
+  #   lr=[]
+  #   for (k,v) in self.stateToIndex.items():
+  #     lr.append(0)
+  #   for (k,v) in state.items():
+  #     lr[self.stateToIndex[k]]=v
+  #   return lr
 
   def get_transition_matrix(self):
     lr=[]
@@ -197,3 +197,14 @@ class CdM (object):
         liste.append(dst)
       sorted(liste)
     return liste[0]
+
+
+def show_distribution(self, init_distrib):
+    vect = self.distribution_to_vector(init_distrib)
+    size = len(self.get_states())
+    fig, ax = plt.subplots()
+    fig.set_size_inches(4, 1)
+    ax.set_yticks([])
+    ax.set_xticklabels(self.get_states())
+    ax.set_xticks([i for i in range(size)])
+    ax.imshow(self.distribution_to_vector(init_distrib).reshape(1, size), cmap=utils.ProbaMap)
