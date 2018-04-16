@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pyAgrum as gum
-
+import matplotlib.pyplot as plt
 import utils
-
+import functools
+from collections import deque
 
 
 class CdM (object):
@@ -72,14 +73,6 @@ class CdM (object):
           dico[k]=vector[v]
     return dico
 
-  # def show_distribution(self,state):
-  #   lr=[]
-  #   for (k,v) in self.stateToIndex.items():
-  #     lr.append(0)
-  #   for (k,v) in state.items():
-  #     lr[self.stateToIndex[k]]=v
-  #   return lr
-
   def get_transition_matrix(self):
     lr=[]
     for k in self.stateToIndex.keys():
@@ -124,6 +117,16 @@ class CdM (object):
     s+="}"
     gnb.showDot(s)
 
+  def show_distribution(self, distribution):
+    fig, ax = plt.subplots()
+    fig.set_size_inches(5, 1.5)
+    ax.set_yticks([])
+    ax.set_xticklabels(self.get_states())
+    lr=[]
+    for (k,v) in self.stateToIndex.items():
+        lr.append(v)
+    ax.set_xticks(lr)
+    ax.imshow(self.distribution_to_vector(distribution).reshape(1, len(self.stateToIndex)), cmap=utils.ProbaMap)
 
 ######Q8- A REVOIR #######################################
   def get_communication_classes(self):
@@ -133,6 +136,7 @@ class CdM (object):
       dico=self.get_transition_distribution(i)
       boole=0
       for (k,v) in dico.items():
+        ##Si il y a un cycle sur lui même
         if ((k==i) and (v==1)):
           boole=1
           lr.append({k})
@@ -153,58 +157,68 @@ class CdM (object):
     else:
       return lr
 
-  def is_irreducible(self):
-    liste1=self.get_communication_classes()
-    liste2=self.get_absorbing_classes()
-    return (liste1==liste2)
-
+  # def get_absorbing_classes(self):
+  #   graph = self.get_transition_graph()
+  #   comm = self.get_communication_classes()                               #comm=[{5}, {6}, {1, 2, 3, 4}]
+  #   lr = []
+  #   for a in comm:
+  #     set1=set()
+  #     for node in a:
+  #       set1.add(graph.children(node))                                    #On ajoute dans set1 tous les fils du current node en regardant le graph
+  #     if (len(set1)==len(a)):                                             #Si il n'y a aucune diff, alors a est absorbant
+  #       lr.append(a)
+  #   return lr
 ##########################################################
-  def is_aperiodic(self):
-    liste=[]
-    for i in self.get_states():
-      dico=self.get_transition_distribution(i)
-      dst = 0;
-      for (k,v) in dico.items():
-        #si il y a un cycle sur lui même
-        if (k==i):
-          return True
-        #Le reste ci-dessous est faux.
-        else:
-            dst+=1
-      liste.append(dst)
-    for e1 in liste:
-      for e2 in liste:
-        if(e1 != e2):
-          return True
-    return False
+  def explore(self,graph, node, explore):
+    graph2 = graph.children(node)                                           #On recup le sous_graph du current node
+    for node2 in graph2:                                                    #On parcourt le sous_graph
+      if node2 not in explore:                                              #On ajoute à notre set d'exploration si on rencontre un nouveau noeud
+        explore.add(node2)                                                  
+        self.explore(graph,node2,explore)                                   #On repete l'opération sur les autres noeuds
+    return explore
+
+  def is_irreducible(self):
+    states = self.stateToIndex.values()
+    graph = self.get_transition_graph()
+    for node in states:
+      explore=self.explore(graph, node, set([node]))                        #On va voir pour chaque noeud, quel noeud il peut atteindre
+      #print(states)
+      #print(explore)
+      if (len(states)!=len(explore)):                                       #Si la longueur de explore != longueur de tous les états, ce n'est pas irreductible
+        return False
+    return True
+
+  def explore2(self,graph, node, graph2, explore, period, cpt):
+    for node2 in graph2:                                                    #On parcourt le sous_graph de base
+      if (node2==node):                                                     #On vient de boucler
+        period.add(cpt)
+        return period
+      if (node2 in explore):                                                #Si on a deja croisé le noeud
+        return period
+      explore.add(node2)
+      self.explore2(graph,node,graph.children(node2),explore,period,cpt+1)  #On parcourt en profondeur l'arbre
+    return period
 
   def get_periodicity(self):
-    boole = self.is_aperiodic()
-    if (boole):
-      return 1
-    else:
-      liste=[]
-      for i in self.get_states():
-        dico=self.get_transition_distribution(i)
-        for (k,v) in dico.items():
-          dst=0
-          #si il y a un cycle sur lui même
-          if (k==i):
-            return 1
-          #Le reste ci-dessous est faux.
-          else:
-            dst+=1
-        liste.append(dst)
-      sorted(liste)
-    return liste[0]
+    states = self.stateToIndex.values()
+    graph = self.get_transition_graph()
+    for node in states:
+      graph2 = graph.children(node)
+      period = self.explore2(graph, node, graph2, set(), set(), 1)
+      #print(period)                                                        #Si period = {1,2,3,4,5}
+      pgcd = functools.reduce(utils.pgcd, period)                           #Alors reduce => pgcd(pgcd(pgcd(pgcd(1,2),3),4),5)
+    return pgcd
 
-
-def show_distribution(self, init_distrib):
-    vect = self.distribution_to_vector(init_distrib)
-    size = len(self.get_states())
-    fig, ax = plt.subplots()
-    fig.set_size_inches(4, 1)
-    ax.set_yticks([])
-    ax.set_xticklabels(self.get_states())
-    ax.set_xticks([i for i in range(size)])
-    ax.imshow(self.distribution_to_vector(init_distrib).reshape(1, size), cmap=utils.ProbaMap)
+  def is_aperiodic(self):
+      states = self.stateToIndex.values()
+      graph = self.get_transition_graph()
+      for node in states:
+        #sous_graphe
+        graph2 = graph.children(node)
+        period = self.explore2(graph, node ,graph2, set(), set(),1)
+        #print(period)                                                      #Si period = {1,2,3,4,5}
+        pgcd=functools.reduce(utils.pgcd, period)                           #Alors reduce => pgcd(pgcd(pgcd(pgcd(1,2),3),4),5)
+        if pgcd == 1:
+          return True
+      return False
+##########################################################

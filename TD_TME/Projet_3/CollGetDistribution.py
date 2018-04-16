@@ -17,12 +17,9 @@ class CollGetDistribution(Collector):
     self.error=0
 
   def initialize(self, cdm, max_iter):
-    self.iteration = 0
-    #print("init")
+    pass
 
   def receive(self, cdm, iter, state):
-    self.iteration=iter+1
-
     #Initialisation du dico du nombre d'états visités
     if (state in self.dico_proba):
       self.dico_proba[state]+=1
@@ -43,15 +40,12 @@ class CollGetDistribution(Collector):
           self.error=error
           return True                                       ##STOP
     self.old_d=current_d                                    ##Sinon old_d=current_d
-    # if(iter%self.pas==0):
-    #   cdm.show_distribution(self.old_d)
+    if(iter%self.pas==0):
+      cdm.show_distribution(self.old_d)
     return False
 
   def finalize(self, cdm, iteration):
     pass
     
   def get_results(self, cdm):
-    #print(self.dico_proba)
-    #print(self.iteration+1)
-    #print(self.max_iter)
     return {"erreur": self.error, "proba":self.old_d}

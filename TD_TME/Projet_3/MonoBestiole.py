@@ -72,4 +72,4 @@ class MonoBestiole(CdM):
     for (k,v) in self.stateToIndex.items():
         lr.append(v)
     ax.set_xticks(lr)
-    ax.imshow(self.distribution_to_vector(distribution).reshape(1, 7), cmap=utils.ProbaMap)
+    ax.imshow(self.distribution_to_vector(distribution).reshape(1, len(self.stateToIndex)), cmap=utils.ProbaMap)

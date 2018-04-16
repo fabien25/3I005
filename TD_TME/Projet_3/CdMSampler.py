@@ -104,5 +104,5 @@ class CdMSampler:
     		break
     self.done=True
     self.notify_finalize(i)
-    return self.collect_results(max_iter)
+    return self.collect_results(i)
     
