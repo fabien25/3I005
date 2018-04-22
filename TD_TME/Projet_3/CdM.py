@@ -221,4 +221,9 @@ class CdM (object):
         if pgcd == 1:
           return True
       return False
+
+  def is_ergodic(self):
+    if (self.is_irreducible() and self.is_aperiodic()):
+      return True
+    return False
 ##########################################################
