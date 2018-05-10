@@ -4,9 +4,10 @@ import time
 from Collector import Collector
 
 
-class CollTimeOut(Collector):
-  def __init__(self, max_duration):
-    self.max_duration = max_duration
+class CollTempsMoyen(Collector):
+  def __init__(self, s):
+    self.max_duration = 10
+    self.s=s
     self.start_time = 0
     self.duration = 0
 
@@ -20,6 +21,11 @@ class CollTimeOut(Collector):
       if self.duration > self.max_duration:
         print(" [Time Out]", end="", flush=True)
         return True
+    if state>=self.s:
+      print("retour ou depassement de l'état ",self.s)
+      self.duration = time.time() - self.start_time
+      print(self.duration)
+      return True
     return False
 
   def finalize(self, cdm, iteration):

@@ -9,15 +9,20 @@ import utils
 import numpy as np
 
 class Methode_2(Collector):
-  def __init__(self,epsilon,pas):
+  def __init__(self,epsilon):
     self.epsilon=epsilon
-    self.pas=pas
-    self.dico_proba={}
+    self.cpt=0
     self.old_d={}
-    self.error=0
+    self.dico_proba={}
+    self.current_d={}
+    ##Q14
+    self.liste_err=[]
+    self.liste_ite=[]
+
 
   def initialize(self, cdm, max_iter):
-    pass
+    #self.old_d=cdm.get_initial_distribution()
+    self.old_d=cdm.get_transition_matrix()
 
   def receive(self, cdm, iter, state):
     #Initialisation du dico du nombre d'états visités
@@ -25,27 +30,45 @@ class Methode_2(Collector):
       self.dico_proba[state]+=1
     else:
       self.dico_proba[state]=1
-    
-    #Création de la current distrib
-    current_d={}
-    for (k,v) in self.dico_proba.items():
-      current_d[k]=v/(iter+1)
 
-    #Distrib to vector
-    vector_old=cdm.distribution_to_vector(self.old_d)
-    vector_current=cdm.distribution_to_vector(current_d)
+    #Création de la current distrib
+    current_d1={}
+    for (k,v) in self.dico_proba.items():                   ##Distribution courante
+      current_d1[k]=v/(iter+1)
+    #vector_old=cdm.distribution_to_vector(self.old_d)
+    vector_old=self.old_d
+    vector_current=vector_old*cdm.get_transition_matrix()
+
+    #print(self.old_d)
+    #print(cdm.get_transition_matrix())
+    #print(vector_current)
+
     diff=vector_current-vector_old                          ##différence avec current_d et old_d
     error=np.amax(np.abs(np.array(diff)))                   ##On stock dans error la valeur max de la diff
+
+    self.liste_err.append(error)
+    self.liste_ite.append(iter)   
+
+    #if (self.cpt>self.n):
+    #  self.current_d=current_d1
+    #  return True
+
     if (error<self.epsilon):                                ##Si l'erreur est inf au epsilon
-          self.error=error
-          return True                                       ##STOP
-    self.old_d=current_d                                    ##Sinon old_d=current_d
-    # if(iter%self.pas==0):
-    #   cdm.show_distribution(self.old_d)
+      self.error=error
+      self.current_d=current_d1
+      return True 
+
+    self.old_d=vector_current
+    self.cpt+=1
+    #self.old_d=current_d
     return False
 
   def finalize(self, cdm, iteration):
-    pass
+    plt.scatter(self.liste_ite,self.liste_err)
+    plt.ylabel('erreur')
+    plt.xlabel('iteration')
+    plt.title('Erreur en fonction de l\'itération')
+    plt.show()
     
   def get_results(self, cdm):
-    return {"Méthode 2 : distribution de la CdM à l'état n":self.old_d}
+    return {"Méthode 2 : distribution de la CdM à l'état n":self.current_d}

@@ -61,9 +61,15 @@ class MonoBestiole(CdM):
     return len(self.get_states())
 
   def show_transition_matrix(self):
+    """
+    permet d'afficher la matrice de transition
+    """
     utils.show_matrix(self.get_transition_matrix())
 
   def show_distribution(self, distribution):
+    """
+    permet d'afficher la distribution passé en paramètre
+    """
     fig, ax = plt.subplots()
     fig.set_size_inches(5, 1.5)
     ax.set_yticks([])

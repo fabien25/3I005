@@ -12,7 +12,7 @@ class Oie(CdM):
 
   def __init__(self,N,p,q,d):
     """
-    Constructeur. En particulier, initalise le dictionaire stateToIndex
+    Constructeur.
     """
     self.N=N #Nb cases
     self.p=p #Tremplin ou glissade
@@ -59,12 +59,17 @@ class Oie(CdM):
     """
     :return: un ensemble d'états énumérable (list, n-uple, etc.)
     """
+    lr=[]
+    cpt=1
+    while cpt<=len(self.plateau):
+        lr.append(cpt)
+        cpt=cpt+1
     # lr=[]
     # for i in self.plateau:
     #     if i not in lr:
     #         lr.append(i)
     # return lr
-    return self.plateau
+    return lr
 
   def get_transition_distribution(self, state):
     """

@@ -57,15 +57,28 @@ class CdM (object):
     return len(self.get_states())
 
   def show_transition_matrix(self):
+    """
+    permet d'afficher la matrice de transition
+    """
     utils.show_matrix(self.get_transition_matrix())
 
   def distribution_to_vector(self, state):
+    """
+    permet de passer de la représentation dico à une
+    représentation vectoriel
+    :return: la représentation vectoriel
+    """
     mat=np.zeros(len(self.stateToIndex))
     for (k,v) in state.items():
       mat[self.stateToIndex[k]]=v
     return mat
 
   def vector_to_distribution(self,vector):
+    """
+    permet de passer de la représentation vectoriel à une
+    représentation dico
+    :return: le dico
+    """
     dico={}
     j=0
     for (k,v) in self.stateToIndex.items():
@@ -74,12 +87,20 @@ class CdM (object):
     return dico
 
   def get_transition_matrix(self):
+    """
+    permet d'obtenir la matrice de transition
+    :return: la matrice
+    """
     lr=[]
     for k in self.stateToIndex.keys():
       lr.append(self.distribution_to_vector(self.get_transition_distribution(k)).tolist());
     return np.array(lr)
 
   def get_transition_graph(self):
+    """
+    permet d'obtenir le graph de transition
+    :return: le graph
+    """
     #créer un graph orienté
     g=gum.DiGraph()
     mat=self.get_transition_matrix()
@@ -96,7 +117,9 @@ class CdM (object):
     return g
 
   def show_transition_graph(self,gnb):
-
+    """
+    permet d'afficher le graph de transition
+    """
     #Grossomodo on reconstruit la string digraph {...}
     s="digraph{"
     
@@ -118,6 +141,9 @@ class CdM (object):
     gnb.showDot(s)
 
   def show_distribution(self, distribution):
+    """
+    permet d'afficher la distribution en paramètre
+    """
     fig, ax = plt.subplots()
     fig.set_size_inches(5, 1.5)
     ax.set_yticks([])
@@ -130,6 +156,10 @@ class CdM (object):
 
 ######Q8- A REVOIR #######################################
   def get_communication_classes(self):
+    """
+    permet d'obtenir la liste des classes communicantes
+    :return: liste des classes communicantes
+    """
     lr=[]
     s=set()
     for i in self.get_states():
@@ -147,6 +177,10 @@ class CdM (object):
     return lr
 
   def get_absorbing_classes(self):
+    """
+    permet d'obtenir la liste des classes absorbantes
+    :return: liste des classes absorbantes
+    """
     liste=self.get_communication_classes()
     lr=[]
     for i in liste:
@@ -170,6 +204,11 @@ class CdM (object):
   #   return lr
 ##########################################################
   def explore(self,graph, node, explore):
+    """
+    permet de parcourir le graph passé en paramètre
+    et de renvoyer le set des nodes exploré
+    :return: set des nodes exploré
+    """
     graph2 = graph.children(node)                                           #On recup le sous_graph du current node
     for node2 in graph2:                                                    #On parcourt le sous_graph
       if node2 not in explore:                                              #On ajoute à notre set d'exploration si on rencontre un nouveau noeud
@@ -178,6 +217,10 @@ class CdM (object):
     return explore
 
   def is_irreducible(self):
+    """
+    permet de savoir si la cdm courante est irreductible
+    :return: Vraie ou Faux
+    """
     states = self.stateToIndex.values()
     graph = self.get_transition_graph()
     for node in states:
@@ -189,6 +232,11 @@ class CdM (object):
     return True
 
   def explore2(self,graph, node, graph2, explore, period, cpt):
+    """
+    permet de parcourir le graph depuis le node passé en paramètre 
+    et de renvoyer la periode si on revient au node initial
+    :return: la periode
+    """
     for node2 in graph2:                                                    #On parcourt le sous_graph de base
       if (node2==node):                                                     #On vient de boucler
         period.add(cpt)
@@ -200,6 +248,10 @@ class CdM (object):
     return period
 
   def get_periodicity(self):
+    """
+    permet de renvoyer la periode la plus courte d'une cdm
+    :return: la plus petite periode
+    """
     states = self.stateToIndex.values()
     graph = self.get_transition_graph()
     for node in states:
@@ -210,20 +262,27 @@ class CdM (object):
     return pgcd
 
   def is_aperiodic(self):
-      states = self.stateToIndex.values()
-      graph = self.get_transition_graph()
-      for node in states:
-        #sous_graphe
-        graph2 = graph.children(node)
-        period = self.explore2(graph, node ,graph2, set(), set(),1)
-        #print(period)                                                      #Si period = {1,2,3,4,5}
-        pgcd=functools.reduce(utils.pgcd, period)                           #Alors reduce => pgcd(pgcd(pgcd(pgcd(1,2),3),4),5)
-        if pgcd == 1:
-          return True
-      return False
+    """
+    permet de savoir si la cdm courante est aperiodic
+    :return: Vrai ou Faux
+    """
+    states = self.stateToIndex.values()
+    graph = self.get_transition_graph()
+    for node in states:
+      #sous_graphe
+      graph2 = graph.children(node)
+      period = self.explore2(graph, node ,graph2, set(), set(),1)
+      #print(period)                                                      #Si period = {1,2,3,4,5}
+      pgcd=functools.reduce(utils.pgcd, period)                           #Alors reduce => pgcd(pgcd(pgcd(pgcd(1,2),3),4),5)
+      if pgcd == 1:
+        return True
+    return False
 
-  def is_ergodic(self):
+  def is_ergodic(self):                                                   #Ergodic = irreductible + aperiodic
+    """
+    permet de savoir si la cdm courante est ergodique
+    :return: Vrai ou Faux
+    """
     if (self.is_irreducible() and self.is_aperiodic()):
       return True
     return False
-##########################################################
